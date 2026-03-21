@@ -65,21 +65,8 @@
                     </div>
                     {% endif %}
                 </div>
-
-                {% elif img %}
-                <img src="{{ img }}" class="img-fluid rounded-3 mb-4 w-100 shadow" style="height:420px;object-fit:cover;" alt="{{ tour.title }}">
-
                 {% else %}
-                <img src="{{ dest_img }}" class="img-fluid rounded-3 mb-4 w-100 shadow" style="height:420px;object-fit:cover;" alt="{{ tour.destination.name }}">
-
-                {% endif %}
-                    {% elif 'kashmir' in dest %}https://images.unsplash.com/photo-1566837945700-30057527ade0?w=900&q=80
-                    {% elif 'ladakh' in dest %}https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=900&q=80
-                    {% elif 'ooty' in dest or 'wayanad' in dest %}https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80
-                    {% elif 'gokarna' in dest or 'murudeshwar' in dest %}https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900&q=80
-                    {% else %}https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=900&q=80
-                    {% endif %}"
-                    class="img-fluid rounded-3 mb-4 w-100 shadow" style="height:420px;object-fit:cover;" alt="{{ tour.title }}">
+                <img src="{{ tour.image_src }}" class="img-fluid rounded-3 mb-4 w-100 shadow" style="height:420px;object-fit:cover;" alt="{{ tour.title }}">
                 {% endif %}
 
                 <!-- Tabs -->
@@ -317,4 +304,6 @@
     </div>
 </section>
 
+{% endwith %}
 {% endblock %}
+
