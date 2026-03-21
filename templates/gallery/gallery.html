@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Hero -->
+<div class="position-relative text-white text-center" style="height:300px;background:linear-gradient(135deg,rgba(0,0,0,0.72),rgba(255,140,0,0.78)),url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1400&q=80') center/cover no-repeat;">
+    <div class="position-absolute top-50 start-50 translate-middle w-100 px-3">
+        <span class="badge bg-warning text-dark px-3 py-2 mb-3 rounded-pill" style="font-size:0.75rem;letter-spacing:1px;">OUR MEMORIES</span>
+        <h1 class="fw-bold display-5 mb-2">Photo Gallery</h1>
+        <p class="lead mb-3">Moments captured from our amazing tours across India</p>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-warning text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item active text-white">Gallery</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+
+        {% if use_sample %}
+        <!-- Sample gallery shown when DB is empty -->
+        <div class="text-center mb-4">
+            <p class="text-muted small">Showing sample images — add your own via the admin panel</p>
+        </div>
+
+        <div class="d-flex gap-2 flex-wrap justify-content-center mb-5">
+            <button class="btn btn-warning btn-sm px-4 gallery-filter-btn active" data-filter="all">All</button>
+            <button class="btn btn-outline-warning btn-sm px-4 gallery-filter-btn" data-filter="mountains">Mountains</button>
+            <button class="btn btn-outline-warning btn-sm px-4 gallery-filter-btn" data-filter="beach">Beach</button>
+            <button class="btn btn-outline-warning btn-sm px-4 gallery-filter-btn" data-filter="culture">Culture</button>
+            <button class="btn btn-outline-warning btn-sm px-4 gallery-filter-btn" data-filter="nature">Nature</button>
+            <button class="btn btn-outline-warning btn-sm px-4 gallery-filter-btn" data-filter="city">City</button>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-lg-3 col-md-4 col-6 gallery-sample-item" data-category="mountains" data-aos="zoom-in">
+                <div class="gallery-item rounded-3 overflow-hidden position-relative" data-bs-toggle="modal" data-bs-target="#galleryModal" data-img="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&q=80" data-title="Himalayan Peaks">
+                    <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80" class="w-100 gallery-img" alt="Himalayan Peaks" loading="lazy">
+                    <div class="gallery-overlay position-absolute top-0 start-0 end-0 bottom-0 d-flex align-items-center justify-content-center">
+                        <div class="text-white text-center p-2"><i class="bi bi-zoom-in fs-3 d-block mb-1"></i><small>Himalayan Peaks</small></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6 gallery-sample-item" data-category="beach" data-aos="zoom-in" data-aos-delay="50">
+                <div class="gallery-item rounded-3 overflow-hidden position-relative" data-bs-toggle="modal" data-bs-target="#galleryModal" data-img="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80" data-title="Goa Beaches">
+                    <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80" class="w-100 gallery-img" alt="Goa Beaches" loading="lazy">
+                    <div class="gallery-overlay position-absolute top-0 start-0 end-0 bottom-0 d-flex align-items-center justify-content-center">
+                        <div class="text-white text-center p-2"><i class="bi bi-zoom-in fs-3 d-block mb-1"></i><small>Goa Beaches</small></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6 gallery-sample-item" data-category="culture" data-aos="zoom-in" data-aos-delay="100">
+                <div class="gallery-item rounded-3 overflow-hidden position-relative" data-bs-toggle="modal" data-bs-target="#galleryModal" data-img="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=1200&q=80" data-title="Taj Mahal">
+                    <img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=600&q=80" class="w-100 gallery-img" alt="Taj Mahal" loading="lazy">
+                    <div class="gallery-overlay position-absolute top-0 start-0 end-0 bottom-0 d-flex align-items-center justify-content-center">
+                        <div class="text-white text-center p-2"><i class="bi bi-zoom-in fs-3 d-block mb-1"></i><small>Taj Mahal</small></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6 gallery-sample-item" data-category="nature" data-aos="zoom-in" data-aos-delay="150">
+                <div class="gallery-item rounded-3 overflow-hidden position-relative" data-bs-toggle="modal" data-bs-target="#galleryModal" data-img="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1200&q=80" data-title="Kerala Backwaters">
+                    <img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=600&q=80" class="w-100 gallery-img" alt="Kerala Backwaters" loading="lazy">
+                    <div class="gallery-overlay position-absolute top-0 start-0 end-0 bottom-0 d-flex align-items-center justify-content-center">
+                        <div class="text-white text-center p-2"><i class="bi bi-zoom-in fs-3 d-block mb-1"></i><small>Kerala Backwaters</small></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6 gallery-sample-item" data-category="city" data-aos="zoom-in">
+                <div class="gallery-item rounded-3 overflow-hidden position-relative" data-bs-toggle="modal" data-bs-target="#galleryModal" data-img="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1200&q=80" data-title="City Lights">
+                    <img src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=600&q=80" class="w-100 gallery-img" alt="City Lights" loading="lazy">
+                    <div class="gallery-overlay position-absolute top-0 start-0 end-0 bottom-0 d-flex align-items-center justify-content-center">
+                        <div class="text-white text-center p-2"><i class="bi bi-zoom-in fs-3 d-block mb-1"></i><small>City Lights</small></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6 gallery-sample-item" data-category="mountains" data-aos="zoom-in" data-aos-delay="50">
+                <div class="gallery-item rounded-3 overflow-hidden position-relative" data-bs-toggle="modal" data-bs-target="#galleryModal" data-img="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&q=80" data-title="Mountain Trek">
+                    <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600&q=80" class="w-100 gallery-img" alt="Mountain Trek" loading="lazy">
+                    <div class="gallery-overlay position-absolute top-0 start-0 end-0 bottom-0 d-flex align-items-center justify-content-center">
+                        <div class="text-white text-center p-2"><i class="bi bi-zoom-in fs-3 d-block mb-1"></i><small>Mountain Trek</small></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6 gallery-sample-item" data-category="beach" data-aos="zoom-in" data-aos-delay="100">
+                <div class="gallery-item rounded-3 overflow-hidden position-relative" data-bs-toggle="modal" data-bs-target="#galleryModal" data-img="https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1200&q=80" data-title="Andaman Islands">
+                    <img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600&q=80" class="w-100 gallery-img" alt="Andaman Islands" loading="lazy">
+                    <div class="gallery-overlay position-absolute top-0 start-0 end-0 bottom-0 d-flex align-items-center justify-content-center">
+                        <div class="text-white text-center p-2"><i class="bi bi-zoom-in fs-3 d-block mb-1"></i><small>Andaman Islands</small></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6 gallery-sample-item" data-category="culture" data-aos="zoom-in" data-aos-delay="150">
+                <div class="gallery-item rounded-3 overflow-hidden position-relative" data-bs-toggle="modal" data-bs-target="#galleryModal" data-img="https://images.unsplash.com/photo-1548013146-72479768bada?w=1200&q=80" data-title="Rajasthan Forts">
+                    <img src="https://images.unsplash.com/photo-1548013146-72479768bada?w=600&q=80" class="w-100 gallery-img" alt="Rajasthan Forts" loading="lazy">
+                    <div class="gallery-overlay position-absolute top-0 start-0 end-0 bottom-0 d-flex align-items-center justify-content-center">
+                        <div class="text-white text-center p-2"><i class="bi bi-zoom-in fs-3 d-block mb-1"></i><small>Rajasthan Forts</small></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6 gallery-sample-item" data-category="nature" data-aos="zoom-in">
+                <div class="gallery-item rounded-3 overflow-hidden position-relative" data-bs-toggle="modal" data-bs-target="#galleryModal" data-img="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80" data-title="Forest Trails">
+                    <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&q=80" class="w-100 gallery-img" alt="Forest Trails" loading="lazy">
+                    <div class="gallery-overlay position-absolute top-0 start-0 end-0 bottom-0 d-flex align-items-center justify-content-center">
+                        <div class="text-white text-center p-2"><i class="bi bi-zoom-in fs-3 d-block mb-1"></i><small>Forest Trails</small></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6 gallery-sample-item" data-category="city" data-aos="zoom-in" data-aos-delay="50">
+                <div class="gallery-item rounded-3 overflow-hidden position-relative" data-bs-toggle="modal" data-bs-target="#galleryModal" data-img="https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=1200&q=80" data-title="Mumbai Skyline">
+                    <img src="https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=600&q=80" class="w-100 gallery-img" alt="Mumbai Skyline" loading="lazy">
+                    <div class="gallery-overlay position-absolute top-0 start-0 end-0 bottom-0 d-flex align-items-center justify-content-center">
+                        <div class="text-white text-center p-2"><i class="bi bi-zoom-in fs-3 d-block mb-1"></i><small>Mumbai Skyline</small></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6 gallery-sample-item" data-category="mountains" data-aos="zoom-in" data-aos-delay="100">
+                <div class="gallery-item rounded-3 overflow-hidden position-relative" data-bs-toggle="modal" data-bs-target="#galleryModal" data-img="https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=1200&q=80" data-title="Snow Peaks">
+                    <img src="https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?w=600&q=80" class="w-100 gallery-img" alt="Snow Peaks" loading="lazy">
+                    <div class="gallery-overlay position-absolute top-0 start-0 end-0 bottom-0 d-flex align-items-center justify-content-center">
+                        <div class="text-white text-center p-2"><i class="bi bi-zoom-in fs-3 d-block mb-1"></i><small>Snow Peaks</small></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6 gallery-sample-item" data-category="nature" data-aos="zoom-in" data-aos-delay="150">
+                <div class="gallery-item rounded-3 overflow-hidden position-relative" data-bs-toggle="modal" data-bs-target="#galleryModal" data-img="https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=1200&q=80" data-title="Sunrise Valley">
+                    <img src="https://images.unsplash.com/photo-1470770903676-69b98201ea1c?w=600&q=80" class="w-100 gallery-img" alt="Sunrise Valley" loading="lazy">
+                    <div class="gallery-overlay position-absolute top-0 start-0 end-0 bottom-0 d-flex align-items-center justify-content-center">
+                        <div class="text-white text-center p-2"><i class="bi bi-zoom-in fs-3 d-block mb-1"></i><small>Sunrise Valley</small></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+        <!-- DB images -->
+        <div class="d-flex gap-2 flex-wrap justify-content-center mb-5">
+            <a href="{% url 'gallery_list' %}" class="btn btn-{% if not active_category %}warning{% else %}outline-warning{% endif %} btn-sm px-4">All</a>
+            {% for cat in categories %}
+            <a href="?category={{ cat.slug }}" class="btn btn-{% if active_category == cat.slug %}warning{% else %}outline-warning{% endif %} btn-sm px-4">{{ cat.name }}</a>
+            {% endfor %}
+        </div>
+        <div class="row g-3">
+            {% for image in images %}
+            <div class="col-lg-3 col-md-4 col-6" data-aos="zoom-in">
+                <div class="gallery-item rounded-3 overflow-hidden position-relative" data-bs-toggle="modal" data-bs-target="#galleryModal" data-img="{{ image.image.url }}" data-title="{{ image.title }}">
+                    <img src="{{ image.image.url }}" class="w-100 gallery-img" alt="{{ image.title }}" loading="lazy">
+                    <div class="gallery-overlay position-absolute top-0 start-0 end-0 bottom-0 d-flex align-items-center justify-content-center">
+                        <div class="text-white text-center p-2"><i class="bi bi-zoom-in fs-3 d-block mb-1"></i><small>{{ image.title }}</small></div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+    </div>
+</section>
+
+<!-- Lightbox Modal -->
+<div class="modal fade" id="galleryModal" tabindex="-1" aria-label="Gallery image lightbox">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-dark border-0">
+            <div class="modal-header border-0 pb-0">
+                <h6 class="modal-title text-white" id="galleryModalTitle"></h6>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-2">
+                <img src="" id="galleryModalImg" class="w-100 rounded" alt="Gallery image" style="max-height:75vh;object-fit:contain;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.gallery-item[data-bs-target="#galleryModal"]').forEach(function(el) {
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', function() {
+        document.getElementById('galleryModalImg').src = this.dataset.img;
+        document.getElementById('galleryModalTitle').textContent = this.dataset.title || '';
+    });
+});
+document.querySelectorAll('.gallery-filter-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.gallery-filter-btn').forEach(function(b) {
+            b.classList.remove('btn-warning', 'active');
+            b.classList.add('btn-outline-warning');
+        });
+        this.classList.add('btn-warning', 'active');
+        this.classList.remove('btn-outline-warning');
+        var filter = this.dataset.filter;
+        document.querySelectorAll('.gallery-sample-item').forEach(function(item) {
+            item.style.display = (filter === 'all' || item.dataset.category === filter) ? '' : 'none';
+        });
+    });
+});
+</script>
+
+{% endblock %}

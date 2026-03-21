@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-header py-5 text-white text-center" style="background: linear-gradient(135deg, rgba(255,140,0,0.9), rgba(0,0,0,0.8)), url('{% static "images/hero2.jpg" %}') center/cover;">
+    <div class="container">
+        <h1 class="fw-bold display-5">Tour Packages</h1>
+        <p class="lead">Discover amazing destinations across India and beyond</p>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-warning">Home</a></li>
+                <li class="breadcrumb-item active text-white">Tour Packages</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<section class="py-4 bg-dark border-bottom">
+    <div class="container-fluid px-3">
+        <div class="d-flex align-items-center justify-content-between mb-3 px-2">
+            <h5 class="fw-bold mb-0 text-white"><i class="bi bi-geo-alt-fill text-warning me-2"></i>All Destinations</h5>
+            {% if active_destination %}
+            <a href="{% url 'tour_list' %}" class="btn btn-sm btn-outline-warning">
+                <i class="bi bi-x-circle me-1"></i>Clear Filter
+            </a>
+            {% endif %}
+        </div>
+        <!-- Auto-scroll marquee row -->
+        <div class="dest-marquee-wrapper" style="overflow:hidden;position:relative;">
+            <div class="dest-marquee-track d-flex gap-3" id="destMarquee">
+                {% for item in destinations_with_images %}
+                <a href="?destination={{ item.dest.id }}"
+                   class="dest-chip flex-shrink-0 text-decoration-none rounded-3 overflow-hidden position-relative {% if active_destination == item.dest.id|stringformat:'s' %}dest-chip-active{% endif %}"
+                   style="width:140px;height:90px;display:block;">
+                    <img src="{{ item.img }}" alt="{{ item.dest.name }}" class="w-100 h-100"
+                         style="object-fit:cover;"
+                         onerror="this.src='https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80'">
+                    <div class="position-absolute bottom-0 start-0 end-0 px-2 py-1"
+                         style="background:linear-gradient(transparent,rgba(0,0,0,0.85));">
+                        <div class="text-white fw-semibold text-truncate" style="font-size:0.72rem;">{{ item.dest.name }}</div>
+                    </div>
+                </a>
+                {% endfor %}
+                <!-- Duplicate for seamless loop -->
+                {% for item in destinations_with_images %}
+                <a href="?destination={{ item.dest.id }}"
+                   class="dest-chip flex-shrink-0 text-decoration-none rounded-3 overflow-hidden position-relative"
+                   style="width:140px;height:90px;display:block;">
+                    <img src="{{ item.img }}" alt="{{ item.dest.name }}" class="w-100 h-100"
+                         style="object-fit:cover;"
+                         onerror="this.src='https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80'">
+                    <div class="position-absolute bottom-0 start-0 end-0 px-2 py-1"
+                         style="background:linear-gradient(transparent,rgba(0,0,0,0.85));">
+                        <div class="text-white fw-semibold text-truncate" style="font-size:0.72rem;">{{ item.dest.name }}</div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.dest-marquee-track {
+    animation: marqueeScroll 40s linear infinite;
+    width: max-content;
+}
+.dest-marquee-wrapper:hover .dest-marquee-track {
+    animation-play-state: paused;
+}
+@keyframes marqueeScroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+</style>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Filters Sidebar -->
+            <div class="col-lg-3">
+                <div class="card border-0 shadow-sm p-4 sticky-top" style="top:80px;">
+                    <h6 class="fw-bold mb-3"><i class="bi bi-funnel-fill text-warning me-2"></i>Filter Tours</h6>
+                    <form method="get">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Destination</label>
+                            <select name="destination" class="form-select form-select-sm">
+                                <option value="">All Destinations</option>
+                                {% for dest in destinations %}
+                                <option value="{{ dest.id }}" {% if request.GET.destination == dest.id|stringformat:"s" %}selected{% endif %}>{{ dest.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Tour Type</label>
+                            <select name="type" class="form-select form-select-sm">
+                                <option value="">All Types</option>
+                                {% for value, label in tour_types %}
+                                <option value="{{ value }}" {% if request.GET.type == value %}selected{% endif %}>{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Min Price (₹)</label>
+                            <input type="number" name="min_price" class="form-control form-control-sm" placeholder="0" value="{{ request.GET.min_price }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Max Price (₹)</label>
+                            <input type="number" name="max_price" class="form-control form-control-sm" placeholder="100000" value="{{ request.GET.max_price }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Max Duration (days)</label>
+                            <input type="number" name="duration" class="form-control form-control-sm" placeholder="30" value="{{ request.GET.duration }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Sort By</label>
+                            <select name="sort" class="form-select form-select-sm">
+                                <option value="">Default</option>
+                                <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                                <option value="price_desc" {% if request.GET.sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                                <option value="duration" {% if request.GET.sort == 'duration' %}selected{% endif %}>Duration</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100 btn-sm fw-semibold">Apply Filters</button>
+                        <a href="{% url 'tour_list' %}" class="btn btn-outline-secondary w-100 btn-sm mt-2">Clear Filters</a>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tour Cards -->
+            <div class="col-lg-9">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <p class="text-muted mb-0">Showing <strong>{{ tours.paginator.count }}</strong> packages</p>
+                </div>
+                <div class="row g-4">
+                    {% for tour in tours %}
+                    <div class="col-md-6 col-xl-4" data-aos="fade-up">
+                        <div class="card tour-card h-100 border-0 shadow-sm">
+                            <div class="position-relative overflow-hidden">
+                                <img src="{{ tour.image_src }}" class="card-img-top tour-thumb" alt="{{ tour.title }}"
+                                     onerror="this.src='/static/images/WebSites Images Travels/Chikkamanglore.png'">
+                                {% if tour.discount_percent > 0 %}
+                                <span class="badge bg-danger position-absolute top-0 end-0 m-2">{{ tour.discount_percent }}% OFF</span>
+                                {% endif %}
+                                <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2">{{ tour.get_tour_type_display }}</span>
+                                <!-- Wishlist button -->
+                                {% if user.is_authenticated %}
+                                <button class="wishlist-btn {% if tour.id in user_wishlist %}active{% endif %}"
+                                        data-tour-id="{{ tour.id }}"
+                                        title="{% if tour.id in user_wishlist %}Remove from wishlist{% else %}Add to wishlist{% endif %}">
+                                    <i class="bi {% if tour.id in user_wishlist %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-title fw-bold">{{ tour.title }}</h6>
+                                <p class="text-muted small mb-2"><i class="bi bi-geo-alt-fill text-warning me-1"></i>{{ tour.destination.name }}</p>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="small text-muted"><i class="bi bi-clock me-1"></i>{{ tour.duration_days }}D/{{ tour.duration_nights }}N</span>
+                                    <span class="small text-muted"><i class="bi bi-people me-1"></i>Max {{ tour.max_group_size }}</span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    {% for i in "12345" %}
+                                    <i class="bi bi-star{% if forloop.counter <= tour.avg_rating %}-fill{% endif %} text-warning small"></i>
+                                    {% endfor %}
+                                    <small class="text-muted ms-1">({{ tour.reviews.count }})</small>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white border-0 d-flex justify-content-between align-items-center">
+                                <div>
+                                    {% if tour.discounted_price %}
+                                    <small class="text-muted text-decoration-line-through d-block">₹{{ tour.price_per_person }}</small>
+                                    <span class="fw-bold text-warning">₹{{ tour.discounted_price }}</span>
+                                    {% else %}
+                                    <span class="fw-bold text-warning">₹{{ tour.price_per_person }}</span>
+                                    {% endif %}
+                                    <small class="text-muted">/person</small>
+                                </div>
+                                <a href="{% url 'tour_detail' tour.slug %}" class="btn btn-warning btn-sm fw-semibold">View Details</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-5">
+                        <i class="bi bi-suitcase-lg fs-1 text-muted d-block mb-3"></i>
+                        <h5 class="text-muted">No tours found for this destination yet</h5>
+                        <p class="text-muted">Tours for this destination will be added soon. Browse all available tours below.</p>
+                        <a href="{% url 'tour_list' %}" class="btn btn-warning fw-semibold px-4">View All Tours</a>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if tours.has_other_pages %}
+                <nav class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        {% if tours.has_previous %}
+                        <li class="page-item"><a class="page-link" href="?page={{ tours.previous_page_number }}">Previous</a></li>
+                        {% endif %}
+                        {% for num in tours.paginator.page_range %}
+                        <li class="page-item {% if tours.number == num %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                        {% endfor %}
+                        {% if tours.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{ tours.next_page_number }}">Next</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

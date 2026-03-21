@@ -1,0 +1,119 @@
+{% extends 'custom_admin/base.html' %}
+{% block title %}Airport Transfers{% endblock %}
+{% block page_title %}Airport Transfers{% endblock %}
+
+{% block content %}
+<!-- Filter -->
+<div class="ca-card mb-4">
+    <div class="ca-card-header">Filter by Status</div>
+    <div class="p-3 d-flex gap-2 flex-wrap">
+        <a href="?" class="btn btn-sm {% if not status_filter %}btn-ca-primary{% else %}btn-outline-secondary{% endif %}">All</a>
+        {% for val, label in transfers.object_list.model.STATUS_CHOICES %}
+        <a href="?status={{ val }}" class="btn btn-sm {% if status_filter == val %}btn-ca-primary{% else %}btn-outline-secondary{% endif %}">{{ label }}</a>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="ca-card">
+    <div class="ca-card-header">
+        <span>Airport Transfer Bookings ({{ transfers.paginator.count }})</span>
+    </div>
+    <div class="table-responsive">
+        <table class="ca-table">
+            <thead>
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Passenger</th>
+                    <th>Type</th>
+                    <th>Airport</th>
+                    <th>Date & Time</th>
+                    <th>Vehicle</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in transfers %}
+                <tr>
+                    <td><span class="badge bg-warning text-dark">{{ t.booking_id }}</span></td>
+                    <td>
+                        <div class="fw-semibold small">{{ t.passenger_name }}</div>
+                        <div class="text-muted" style="font-size:0.72rem;">{{ t.passenger_phone }}</div>
+                    </td>
+                    <td>
+                        {% if t.transfer_type == 'pickup' %}<span class="badge bg-success">Pickup</span>
+                        {% elif t.transfer_type == 'drop' %}<span class="badge bg-danger">Drop</span>
+                        {% else %}<span class="badge bg-info text-dark">Both</span>{% endif %}
+                    </td>
+                    <td class="small">{{ t.airport_name }}{% if t.flight_number %}<br><span class="text-muted">{{ t.flight_number }}</span>{% endif %}</td>
+                    <td class="small">{{ t.pickup_date }}<br>{{ t.pickup_time }}</td>
+                    <td class="small">{{ t.get_vehicle_type_display }}<br><span class="text-muted">{{ t.passengers }} pax</span></td>
+                    <td class="fw-bold text-warning">₹{{ t.total_amount }}</td>
+                    <td>
+                        <span class="badge {% if t.status == 'confirmed' %}bg-success{% elif t.status == 'pending' %}bg-warning text-dark{% elif t.status == 'cancelled' %}bg-danger{% else %}bg-secondary{% endif %}">
+                            {{ t.get_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge {% if t.payment_status == 'paid' %}bg-success{% elif t.payment_status == 'pending' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+                            {{ t.get_payment_status_display }}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#editModal{{ t.pk }}">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                    </td>
+                </tr>
+
+                <!-- Edit Modal -->
+                <div class="modal fade" id="editModal{{ t.pk }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header bg-warning text-dark">
+                                <h6 class="modal-title fw-bold">Update Transfer {{ t.booking_id }}</h6>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <form method="post" action="{% url 'admin_airport_transfer_status' t.pk %}">
+                                {% csrf_token %}
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold small">Booking Status</label>
+                                        <select name="status" class="form-select form-select-sm">
+                                            {% for val, label in t.STATUS_CHOICES %}
+                                            <option value="{{ val }}" {% if t.status == val %}selected{% endif %}>{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label fw-semibold small">Payment Status</label>
+                                        <select name="payment_status" class="form-select form-select-sm">
+                                            {% for val, label in t.PAYMENT_CHOICES %}
+                                            <option value="{{ val }}" {% if t.payment_status == val %}selected{% endif %}>{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="bg-light rounded p-3 small">
+                                        <div><strong>Pickup:</strong> {{ t.pickup_address }}</div>
+                                        <div><strong>Drop:</strong> {{ t.drop_address }}</div>
+                                        {% if t.special_requests %}<div class="mt-1"><strong>Notes:</strong> {{ t.special_requests }}</div>{% endif %}
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-ca-primary btn-sm">Save Changes</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <tr><td colspan="10" class="text-center text-muted py-4">No airport transfer bookings yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

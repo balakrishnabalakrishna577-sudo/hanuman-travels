@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header py-4 bg-warning text-dark">
+    <div class="container">
+        <h2 class="fw-bold">Edit Profile</h2>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm p-4">
+                    <form method="post" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        <h6 class="fw-bold mb-3 text-warning">Personal Information</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">First Name</label>
+                                {{ user_form.first_name }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Last Name</label>
+                                {{ user_form.last_name }}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-semibold">Email</label>
+                                {{ user_form.email }}
+                            </div>
+                        </div>
+                        <h6 class="fw-bold mb-3 text-warning">Profile Details</h6>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Phone</label>
+                                {{ profile_form.phone }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Date of Birth</label>
+                                {{ profile_form.date_of_birth }}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-semibold">Address</label>
+                                {{ profile_form.address }}
+                            </div>
+                            <div class="col-12">
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <span class="small fw-semibold">Location</span>
+                                    <button type="button" id="detectLocationBtn" class="btn btn-sm btn-outline-warning fw-semibold">
+                                        <i class="bi bi-geo-alt-fill me-1"></i>Detect My Location
+                                    </button>
+                                    <span id="locationStatus" class="small text-muted"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold">City</label>
+                                {{ profile_form.city }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold">State</label>
+                                {{ profile_form.state }}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-semibold">Country</label>
+                                {{ profile_form.country }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Passport Number</label>
+                                {{ profile_form.passport_number }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-semibold">Emergency Contact</label>
+                                {{ profile_form.emergency_contact }}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label small fw-semibold">Profile Picture</label>
+                                {{ profile_form.profile_picture }}
+                            </div>
+                        </div>
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="submit" class="btn btn-warning fw-bold px-5">Save Changes</button>
+                            <a href="{% url 'user_dashboard' %}" class="btn btn-outline-secondary px-5">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('detectLocationBtn').addEventListener('click', function () {
+    const btn = this;
+    const status = document.getElementById('locationStatus');
+
+    if (!navigator.geolocation) {
+        status.textContent = 'Geolocation is not supported by your browser.';
+        status.className = 'small text-danger';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Detecting...';
+    status.textContent = '';
+
+    navigator.geolocation.getCurrentPosition(
+        function (position) {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+
+            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
+                .then(res => res.json())
+                .then(data => {
+                    const addr = data.address || {};
+
+                    // City: try multiple fields
+                    const city = addr.city || addr.town || addr.village || addr.suburb || addr.county || '';
+                    // State
+                    const state = addr.state || addr.region || '';
+                    // Country
+                    const country = addr.country || '';
+                    // Full address line
+                    const fullAddress = [
+                        addr.road || addr.neighbourhood || '',
+                        addr.suburb || '',
+                        addr.postcode || ''
+                    ].filter(Boolean).join(', ');
+
+                    // Fill form fields
+                    const cityField = document.getElementById('id_city');
+                    const stateField = document.getElementById('id_state');
+                    const countryField = document.getElementById('id_country');
+                    const addressField = document.getElementById('id_address');
+
+                    if (cityField) cityField.value = city;
+                    if (stateField) stateField.value = state;
+                    if (countryField) countryField.value = country;
+                    if (addressField && !addressField.value && fullAddress) {
+                        addressField.value = fullAddress;
+                    }
+
+                    status.textContent = '✓ Location detected successfully!';
+                    status.className = 'small text-success';
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-geo-alt-fill me-1"></i>Detect My Location';
+                })
+                .catch(() => {
+                    status.textContent = 'Could not fetch location details. Try again.';
+                    status.className = 'small text-danger';
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-geo-alt-fill me-1"></i>Detect My Location';
+                });
+        },
+        function (error) {
+            let msg = 'Location access denied.';
+            if (error.code === error.TIMEOUT) msg = 'Location request timed out.';
+            if (error.code === error.POSITION_UNAVAILABLE) msg = 'Location unavailable.';
+            status.textContent = msg;
+            status.className = 'small text-danger';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-geo-alt-fill me-1"></i>Detect My Location';
+        },
+        { timeout: 10000 }
+    );
+});
+</script>
+{% endblock %}

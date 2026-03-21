@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header py-5 text-white text-center"
+     style="background: linear-gradient(135deg, rgba(255,140,0,0.9), rgba(0,0,0,0.85)), url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1400&q=80') center/cover;">
+    <div class="container">
+        <h1 class="fw-bold display-5">Frequently Asked Questions</h1>
+        <p class="lead">Everything you need to know before you travel</p>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-warning">Home</a></li>
+                <li class="breadcrumb-item active text-white">FAQ</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                {% if faqs %}
+                    {% regroup faqs by category as faq_groups %}
+                    {% for group in faq_groups %}
+                    <h5 class="fw-bold mb-3 mt-4 text-warning">
+                        <i class="bi bi-folder2-open me-2"></i>{{ group.grouper }}
+                    </h5>
+                    <div class="accordion mb-4" id="faqAccordion{{ forloop.counter }}">
+                        {% for item in group.list %}
+                        <div class="accordion-item border-0 shadow-sm mb-2 rounded-3 overflow-hidden" data-aos="fade-up">
+                            <h2 class="accordion-header" id="heading{{ item.id }}">
+                                <button class="accordion-button {% if not forloop.first %}collapsed{% endif %} fw-semibold"
+                                        type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#collapse{{ item.id }}"
+                                        aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
+                                        aria-controls="collapse{{ item.id }}">
+                                    <i class="bi bi-question-circle-fill text-warning me-2 flex-shrink-0"></i>
+                                    {{ item.question }}
+                                </button>
+                            </h2>
+                            <div id="collapse{{ item.id }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
+                                 aria-labelledby="heading{{ item.id }}">
+                                <div class="accordion-body text-muted">
+                                    {{ item.answer|linebreaks }}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+
+                {% else %}
+                <!-- Static FAQs shown when no DB entries exist -->
+
+                <h5 class="fw-bold mb-3 mt-2 text-warning"><i class="bi bi-folder2-open me-2"></i>Booking &amp; Payments</h5>
+                <div class="accordion mb-4" id="faqBooking">
+
+                    <div class="accordion-item border-0 shadow-sm mb-2 rounded-3 overflow-hidden">
+                        <h2 class="accordion-header" id="h1">
+                            <button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="true" aria-controls="faq1">
+                                <i class="bi bi-question-circle-fill text-warning me-2 flex-shrink-0"></i>How do I book a tour package?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" aria-labelledby="h1">
+                            <div class="accordion-body text-muted">
+                                Browse our <a href="{% url 'tour_list' %}">Tour Packages</a> page, select your preferred tour, and click "Book Now". You'll need to log in or create an account. You can also contact us via WhatsApp or phone for assisted booking.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item border-0 shadow-sm mb-2 rounded-3 overflow-hidden">
+                        <h2 class="accordion-header" id="h2">
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq2" aria-expanded="false" aria-controls="faq2">
+                                <i class="bi bi-question-circle-fill text-warning me-2 flex-shrink-0"></i>What payment methods do you accept?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" aria-labelledby="h2">
+                            <div class="accordion-body text-muted">
+                                We accept UPI, Net Banking, Credit/Debit Cards, and bank transfers. A 30% advance is required to confirm the booking, with the balance due 7 days before departure.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item border-0 shadow-sm mb-2 rounded-3 overflow-hidden">
+                        <h2 class="accordion-header" id="h3">
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq3" aria-expanded="false" aria-controls="faq3">
+                                <i class="bi bi-question-circle-fill text-warning me-2 flex-shrink-0"></i>Can I cancel or modify my booking?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" aria-labelledby="h3">
+                            <div class="accordion-body text-muted">
+                                Yes. Cancellations 15+ days before departure get a full refund minus processing fees. 7–14 days before: 50% refund. Within 7 days: no refund. To modify, contact us at least 10 days in advance.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <h5 class="fw-bold mb-3 mt-4 text-warning"><i class="bi bi-folder2-open me-2"></i>Tours &amp; Travel</h5>
+                <div class="accordion mb-4" id="faqTours">
+
+                    <div class="accordion-item border-0 shadow-sm mb-2 rounded-3 overflow-hidden">
+                        <h2 class="accordion-header" id="h4">
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq4" aria-expanded="false" aria-controls="faq4">
+                                <i class="bi bi-question-circle-fill text-warning me-2 flex-shrink-0"></i>Are your tour packages customizable?
+                            </button>
+                        </h2>
+                        <div id="faq4" class="accordion-collapse collapse" aria-labelledby="h4">
+                            <div class="accordion-body text-muted">
+                                Absolutely! We specialize in customized packages. Choose your destinations, duration, accommodation type, and activities. Contact us and we'll create a personalized itinerary just for you.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item border-0 shadow-sm mb-2 rounded-3 overflow-hidden">
+                        <h2 class="accordion-header" id="h5">
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq5" aria-expanded="false" aria-controls="faq5">
+                                <i class="bi bi-question-circle-fill text-warning me-2 flex-shrink-0"></i>What is included in the tour price?
+                            </button>
+                        </h2>
+                        <div id="faq5" class="accordion-collapse collapse" aria-labelledby="h5">
+                            <div class="accordion-body text-muted">
+                                Tour prices typically include accommodation, transportation, sightseeing, and a guide. Meals are included as specified. Personal expenses, travel insurance, and optional activities are not included unless stated.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item border-0 shadow-sm mb-2 rounded-3 overflow-hidden">
+                        <h2 class="accordion-header" id="h6">
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq6" aria-expanded="false" aria-controls="faq6">
+                                <i class="bi bi-question-circle-fill text-warning me-2 flex-shrink-0"></i>Do you offer group discounts?
+                            </button>
+                        </h2>
+                        <div id="faq6" class="accordion-collapse collapse" aria-labelledby="h6">
+                            <div class="accordion-body text-muted">
+                                Yes! Groups of 10 or more get special discounts. Corporate groups, school trips, and family reunions get additional benefits. Contact us for a customized group quote.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <h5 class="fw-bold mb-3 mt-4 text-warning"><i class="bi bi-folder2-open me-2"></i>Car Rental &amp; Airport Transfer</h5>
+                <div class="accordion mb-4" id="faqCar">
+
+                    <div class="accordion-item border-0 shadow-sm mb-2 rounded-3 overflow-hidden">
+                        <h2 class="accordion-header" id="h7">
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq7" aria-expanded="false" aria-controls="faq7">
+                                <i class="bi bi-question-circle-fill text-warning me-2 flex-shrink-0"></i>What vehicles are available for rent?
+                            </button>
+                        </h2>
+                        <div id="faq7" class="accordion-collapse collapse" aria-labelledby="h7">
+                            <div class="accordion-body text-muted">
+                                We offer sedans, SUVs, tempo travellers, and luxury cars — all with experienced, licensed drivers. Browse available vehicles on our <a href="{% url 'vehicle_list' %}">Car Rental</a> page.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item border-0 shadow-sm mb-2 rounded-3 overflow-hidden">
+                        <h2 class="accordion-header" id="h8">
+                            <button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faq8" aria-expanded="false" aria-controls="faq8">
+                                <i class="bi bi-question-circle-fill text-warning me-2 flex-shrink-0"></i>How do I book an airport transfer?
+                            </button>
+                        </h2>
+                        <div id="faq8" class="accordion-collapse collapse" aria-labelledby="h8">
+                            <div class="accordion-body text-muted">
+                                Visit our <a href="{% url 'airport_transfer' %}">Airport Transfer</a> page, fill in your pickup/drop details and flight info. We confirm within 2 hours. Our driver will be at the airport with a name board.
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                {% endif %}
+
+                <!-- Still have questions CTA -->
+                <div class="card border-0 shadow-sm p-4 mt-5 text-center" style="background: linear-gradient(135deg, #1a1a2e, #0f3460);">
+                    <i class="bi bi-chat-dots-fill text-warning fs-2 mb-3"></i>
+                    <h5 class="fw-bold text-white mb-2">Still have questions?</h5>
+                    <p class="text-muted mb-3">Our team is happy to help you plan your perfect trip.</p>
+                    <div class="d-flex gap-2 justify-content-center flex-wrap">
+                        <a href="{% url 'contact' %}" class="btn btn-warning fw-semibold px-4">
+                            <i class="bi bi-envelope me-2"></i>Contact Us
+                        </a>
+                        <a href="https://wa.me/{{ WHATSAPP_NUMBER }}?text=Hi! I have a question about your tours." class="btn btn-success fw-semibold px-4" target="_blank">
+                            <i class="bi bi-whatsapp me-2"></i>WhatsApp
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

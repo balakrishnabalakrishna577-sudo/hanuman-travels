@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+.receipt-card { border-radius: 16px; overflow: hidden; }
+.receipt-header { background: linear-gradient(135deg, #1a1a2e, #0f3460); color: #fff; padding: 2rem; }
+.receipt-badge { background: rgba(255,140,0,0.15); border: 1px solid rgba(255,140,0,0.4); color: #ff8c00; border-radius: 8px; padding: 4px 14px; font-size: 0.8rem; font-weight: 600; }
+.info-box { background: #f8f9fa; border-radius: 10px; padding: 1rem 1.2rem; height: 100%; }
+.info-box .label { font-size: 0.72rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+.info-box .value { font-weight: 700; color: #1a1a2e; font-size: 0.95rem; }
+.divider-dashed { border-top: 2px dashed #e0e0e0; margin: 1.5rem 0; }
+
+@media print {
+    @page { size: A4; margin: 8mm 10mm; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+    /* hide everything outside the receipt */
+    body > *:not(.receipt-print-wrapper) { display: none !important; }
+    nav, header, footer, .navbar, .footer-section { display: none !important; }
+    section.py-5 { padding: 0 !important; margin: 0 !important; }
+    .container { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+    .row { margin: 0 !important; }
+    .col-lg-8 { max-width: 100% !important; flex: 0 0 100% !important; padding: 0 !important; }
+    .receipt-card { border-radius: 0 !important; box-shadow: none !important; }
+
+    /* force colors */
+    .receipt-header { background: linear-gradient(135deg, #1a1a2e, #0f3460) !important; color: #fff !important; padding: 10px 14px !important; }
+    .receipt-header span, .receipt-header div { color: #fff !important; }
+    .text-white-50 { color: rgba(255,255,255,0.6) !important; }
+    .receipt-badge { background: rgba(255,140,0,0.25) !important; border: 1px solid #ff8c00 !important; color: #ff8c00 !important; }
+    .info-box { background: #f0f2f5 !important; padding: 5px 9px !important; border-radius: 5px !important; }
+    .info-box .label { font-size: 0.6rem !important; color: #666 !important; }
+    .info-box .value { font-size: 0.78rem !important; color: #1a1a2e !important; }
+    .badge.bg-success { background-color: #198754 !important; color: #fff !important; }
+    .badge.bg-warning  { background-color: #ffc107 !important; color: #000 !important; }
+    .badge.bg-danger   { background-color: #dc3545 !important; color: #fff !important; }
+    .badge.bg-info     { background-color: #0dcaf0 !important; color: #000 !important; }
+    .text-warning { color: #ff8c00 !important; }
+
+    /* compact spacing */
+    .divider-dashed { margin: 5px 0 !important; }
+    .p-4 { padding: 10px 14px !important; }
+    .mb-3 { margin-bottom: 5px !important; }
+    .mb-4 { margin-bottom: 8px !important; }
+    .fs-5 { font-size: 0.85rem !important; }
+    .fs-4 { font-size: 1rem !important; }
+    .fs-2 { font-size: 1.2rem !important; }
+    .row.g-3 { display: grid !important; grid-template-columns: 1fr 1fr; gap: 5px !important; }
+    .row.g-3 > [class*="col"] { width: 100% !important; max-width: 100% !important; flex: none !important; }
+    .hide-on-print { display: none !important; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow receipt-card">
+
+                    <!-- Receipt Header -->
+                    <div class="receipt-header">
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+                            <div>
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <i class="bi bi-airplane-fill text-warning fs-5"></i>
+                                    <span class="fw-bold fs-5">Hanuman Tours And Travels</span>
+                                </div>
+                                <div class="text-white-50 small">Peresandra, Chikkaballapura, Karnataka — +91 9740120892</div>
+                            </div>
+                            <div class="text-end">
+                                <div class="receipt-badge mb-1">BOOKING RECEIPT</div>
+                                <div class="text-white-50 small">{{ booking.created_at|date:"d M Y, H:i" }}</div>
+                            </div>
+                        </div>
+                        <div class="divider-dashed" style="border-color:rgba(255,255,255,0.15);"></div>
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="bi bi-check-circle-fill text-warning fs-2"></i>
+                            <div>
+                                <div class="fw-bold fs-5">Booking Confirmed!</div>
+                                <div class="text-white-50 small">Thank you for choosing us. We'll contact you shortly.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Receipt Body -->
+                    <div class="p-4">
+
+                        <!-- Booking ID + Status -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-6">
+                                <div class="info-box">
+                                    <div class="label">Booking ID</div>
+                                    <div class="value text-warning fs-5">{{ booking.booking_id }}</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="info-box">
+                                    <div class="label">Status</div>
+                                    <div class="value">
+                                        <span class="badge bg-{% if booking.status == 'confirmed' %}success{% elif booking.status == 'cancelled' %}danger{% elif booking.status == 'completed' %}info{% else %}warning text-dark{% endif %} fs-6">
+                                            {{ booking.get_status_display }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tour Details -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <div class="info-box">
+                                    <div class="label">Tour Package</div>
+                                    <div class="value">{{ booking.tour.title }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-box">
+                                    <div class="label">Destination</div>
+                                    <div class="value">{{ booking.tour.destination.name }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-box">
+                                    <div class="label">Travel Date</div>
+                                    <div class="value">{{ booking.travel_date }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-box">
+                                    <div class="label">Duration</div>
+                                    <div class="value">{{ booking.tour.duration_days }}D / {{ booking.tour.duration_nights }}N</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-box">
+                                    <div class="label">Travelers</div>
+                                    <div class="value">{{ booking.num_adults }} Adults{% if booking.num_children %}, {{ booking.num_children }} Children{% endif %}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="info-box">
+                                    <div class="label">Payment Status</div>
+                                    <div class="value">{{ booking.get_payment_status_display }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if booking.special_requests %}
+                        <div class="info-box mb-3">
+                            <div class="label">Special Requests</div>
+                            <div class="value" style="font-weight:400;">{{ booking.special_requests }}</div>
+                        </div>
+                        {% endif %}
+
+                        <div class="divider-dashed"></div>
+
+                        <!-- Total -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <span class="fw-bold fs-5">Total Amount</span>
+                            <span class="fw-bold fs-4 text-warning">₹{{ booking.total_amount }}</span>
+                        </div>
+
+                        <!-- Customer Info -->
+                        <div class="info-box mb-4">
+                            <div class="label mb-2">Customer Details</div>
+                            <div class="row g-2">
+                                <div class="col-sm-6">
+                                    <div class="text-muted small">Name</div>
+                                    <div class="fw-semibold">{{ booking.user.get_full_name|default:booking.user.username }}</div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="text-muted small">Email</div>
+                                    <div class="fw-semibold">{{ booking.user.email }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-3 flex-wrap justify-content-center hide-on-print">
+                            <a href="{% url 'booking_print' booking.booking_id %}" target="_blank" class="btn btn-warning px-4 fw-semibold">
+                                <i class="bi bi-printer-fill me-2"></i>Print Receipt
+                            </a>
+                            <a href="{% url 'user_dashboard' %}" class="btn btn-dark px-4">
+                                <i class="bi bi-speedometer2 me-2"></i>My Dashboard
+                            </a>
+                            {% if booking.status == 'pending' %}
+                            <a href="{% url 'cancel_booking' booking.booking_id %}" class="btn btn-outline-danger px-4" onclick="return confirm('Cancel this booking?')">
+                                <i class="bi bi-x-circle me-2"></i>Cancel Booking
+                            </a>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+{% if request.GET.print %}
+<script>window.onload = function(){ window.print(); }</script>
+{% endif %}
+{% endblock %}

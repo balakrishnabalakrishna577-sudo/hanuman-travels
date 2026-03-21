@@ -1,0 +1,97 @@
+{% extends 'custom_admin/base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+
+        <!-- Booking Info Card -->
+        <div class="ca-card mb-4">
+            <div class="ca-card-header">
+                <span><i class="bi bi-info-circle text-warning me-2"></i>Booking Info</span>
+            </div>
+            <div class="p-3">
+                <div class="row g-3">
+                    <div class="col-sm-4">
+                        <div class="text-muted small">Booking ID</div>
+                        <div class="fw-bold text-warning">{{ booking.booking_id }}</div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="text-muted small">Customer</div>
+                        <div class="fw-semibold">{{ booking.user.get_full_name|default:booking.user.username }}</div>
+                        <div class="text-muted small">{{ booking.user.email }}</div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="text-muted small">Booked On</div>
+                        <div class="fw-semibold">{{ booking.created_at|date:"d M Y, H:i" }}</div>
+                    </div>
+                    {% if booking.tour %}
+                    <div class="col-sm-4">
+                        <div class="text-muted small">Tour</div>
+                        <div class="fw-semibold">{{ booking.tour.title }}</div>
+                    </div>
+                    {% endif %}
+                    {% if booking.hotel %}
+                    <div class="col-sm-4">
+                        <div class="text-muted small">Hotel</div>
+                        <div class="fw-semibold">{{ booking.hotel.name }}</div>
+                    </div>
+                    {% endif %}
+                    {% if booking.vehicle %}
+                    <div class="col-sm-4">
+                        <div class="text-muted small">Vehicle</div>
+                        <div class="fw-semibold">{{ booking.vehicle.name }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Form Card -->
+        <div class="ca-card">
+            <div class="ca-card-header">
+                <span><i class="bi bi-pencil-square text-warning me-2"></i>Edit Booking</span>
+                <a href="{{ back_url }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i>Back
+                </a>
+            </div>
+            <div class="p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        {% for field in form %}
+                        <div class="{% if field.field.widget.input_type == 'checkbox' %}col-12{% elif field.field.widget.input_type == 'textarea' %}col-12{% else %}col-md-6{% endif %}">
+                            {% if field.field.widget.input_type == 'checkbox' %}
+                            <div class="form-check mt-2">
+                                {{ field }}
+                                <label class="form-check-label fw-semibold small" for="{{ field.id_for_label }}">
+                                    {{ field.label }}
+                                </label>
+                            </div>
+                            {% else %}
+                            <label class="ca-form-label" for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                                {% if field.field.required %}<span class="text-danger">*</span>{% endif %}
+                            </label>
+                            {{ field }}
+                            {% endif %}
+                            {% if field.errors %}
+                            <div class="text-danger small mt-1">{{ field.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="d-flex gap-2 mt-4 pt-3 border-top">
+                        <button type="submit" class="btn btn-ca-primary px-4">
+                            <i class="bi bi-check-lg me-1"></i>Save Changes
+                        </button>
+                        <a href="{{ back_url }}" class="btn btn-outline-secondary px-4">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

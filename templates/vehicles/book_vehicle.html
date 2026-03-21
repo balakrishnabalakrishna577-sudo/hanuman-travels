@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header py-4 bg-warning text-dark text-center">
+    <div class="container"><h2 class="fw-bold">Book Vehicle</h2></div>
+</div>
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm p-4">
+                    <h5 class="fw-bold mb-4">Booking Details</h5>
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-12"><label class="form-label fw-semibold">Pickup Location</label>{{ form.pickup_location }}</div>
+                            <div class="col-12"><label class="form-label fw-semibold">Drop Location</label>{{ form.drop_location }}</div>
+                            <div class="col-md-6"><label class="form-label fw-semibold">Pickup Date</label>{{ form.pickup_date }}</div>
+                            <div class="col-md-6"><label class="form-label fw-semibold">Return Date</label>{{ form.return_date }}</div>
+                            <div class="col-12">
+                                <div class="form-check">{{ form.with_driver }}<label class="form-check-label fw-semibold">Include Driver</label></div>
+                            </div>
+                            <div class="col-12"><label class="form-label fw-semibold">Special Requests</label>{{ form.special_requests }}</div>
+                            <div class="col-12"><button type="submit" class="btn btn-warning btn-lg w-100 fw-bold">Confirm Booking</button></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm p-4">
+                    <h6 class="fw-bold mb-3">Vehicle Summary</h6>
+                    {% if vehicle.image %}
+                    <img src="{{ vehicle.image.url }}" class="img-fluid rounded-3 mb-3" alt="{{ vehicle.name }}">
+                    {% else %}
+                    {% with vtype=vehicle.vehicle_type %}
+                    {% if vtype == "sedan" %}<img src="https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=500&q=80" class="img-fluid rounded-3 mb-3" alt="{{ vehicle.name }}">
+                    {% elif vtype == "suv" %}<img src="https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=500&q=80" class="img-fluid rounded-3 mb-3" alt="{{ vehicle.name }}">
+                    {% elif vtype == "tempo" %}<img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=500&q=80" class="img-fluid rounded-3 mb-3" alt="{{ vehicle.name }}">
+                    {% elif vtype == "bus" %}<img src="https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=500&q=80" class="img-fluid rounded-3 mb-3" alt="{{ vehicle.name }}">
+                    {% elif vtype == "luxury" %}<img src="https://images.unsplash.com/photo-1563720223185-11003d516935?w=500&q=80" class="img-fluid rounded-3 mb-3" alt="{{ vehicle.name }}">
+                    {% else %}<img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=500&q=80" class="img-fluid rounded-3 mb-3" alt="{{ vehicle.name }}">
+                    {% endif %}
+                    {% endwith %}
+                    {% endif %}
+                    <h6 class="fw-bold">{{ vehicle.name }}</h6>
+                    <p class="text-muted small">{{ vehicle.model }} | {{ vehicle.get_vehicle_type_display }}</p>
+                    <p class="text-muted small"><i class="bi bi-people me-1"></i>{{ vehicle.capacity }} Seats</p>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <span>Price per day:</span>
+                        <span class="fw-bold text-warning">₹{{ vehicle.price_per_day }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

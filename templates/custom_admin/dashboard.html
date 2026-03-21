@@ -1,0 +1,157 @@
+{% extends 'custom_admin/base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Stats Row -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="ca-stat-card">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="ca-stat-icon" style="background:rgba(255,140,0,0.12);">
+                    <i class="bi bi-calendar-check-fill text-warning"></i>
+                </div>
+                <span class="badge bg-warning text-dark small">Tour</span>
+            </div>
+            <h3 class="fw-bold mb-0">{{ total_tour_bookings }}</h3>
+            <p class="text-muted small mb-0">Tour Bookings</p>
+            <small class="text-warning">{{ pending_tour_bookings }} pending</small>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="ca-stat-card">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="ca-stat-icon" style="background:rgba(25,135,84,0.1);">
+                    <i class="bi bi-car-front-fill text-success"></i>
+                </div>
+                <span class="badge bg-success small">Car</span>
+            </div>
+            <h3 class="fw-bold mb-0">{{ total_car_bookings }}</h3>
+            <p class="text-muted small mb-0">Car Bookings</p>
+            <small class="text-success">{{ pending_car_bookings }} pending</small>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="ca-stat-card">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="ca-stat-icon" style="background:rgba(220,53,69,0.1);">
+                    <i class="bi bi-people-fill text-danger"></i>
+                </div>
+                <span class="badge bg-danger small">Users</span>
+            </div>
+            <h3 class="fw-bold mb-0">{{ total_users }}</h3>
+            <p class="text-muted small mb-0">Registered Users</p>
+            <small class="text-danger">{{ new_users_today }} today</small>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="ca-stat-card">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="ca-stat-icon" style="background:rgba(13,110,253,0.1);">
+                    <i class="bi bi-airplane-fill text-primary"></i>
+                </div>
+                <span class="badge bg-primary small">Airport</span>
+            </div>
+            <h3 class="fw-bold mb-0">{{ total_airport_transfers }}</h3>
+            <p class="text-muted small mb-0">Airport Transfers</p>
+            <small class="text-primary">{{ pending_airport_transfers }} pending</small>
+        </div>
+    </div>
+</div>
+
+<!-- Revenue + Messages Row -->
+<div class="row g-3 mb-4">
+    <div class="col-lg-3 col-6">
+        <div class="ca-stat-card" style="background:linear-gradient(135deg,#ff8c00,#ff4500);color:#fff;">
+            <i class="bi bi-currency-rupee fs-2 mb-2 d-block opacity-75"></i>
+            <h3 class="fw-bold mb-0">₹{{ total_revenue|floatformat:0 }}</h3>
+            <p class="mb-0 small opacity-75">Total Revenue</p>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="ca-stat-card">
+            <div class="ca-stat-icon mb-2" style="background:rgba(255,193,7,0.15);">
+                <i class="bi bi-compass-fill text-warning"></i>
+            </div>
+            <h3 class="fw-bold mb-0">{{ total_tours }}</h3>
+            <p class="text-muted small mb-0">Tour Packages</p>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="ca-stat-card">
+            <div class="ca-stat-icon mb-2" style="background:rgba(13,202,240,0.15);">
+                <i class="bi bi-envelope-fill text-info"></i>
+            </div>
+            <h3 class="fw-bold mb-0">{{ unread_messages }}</h3>
+            <p class="text-muted small mb-0">Unread Messages</p>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <div class="ca-stat-card">
+            <div class="ca-stat-icon mb-2" style="background:rgba(111,66,193,0.1);">
+                <i class="bi bi-newspaper" style="color:#6f42c1;"></i>
+            </div>
+            <h3 class="fw-bold mb-0">{{ total_subscribers }}</h3>
+            <p class="text-muted small mb-0">Newsletter Subs</p>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Bookings + Messages -->
+<div class="row g-3">
+    <div class="col-lg-7">
+        <div class="ca-card">
+            <div class="ca-card-header">
+                <span><i class="bi bi-calendar-check-fill text-warning me-2"></i>Recent Tour Bookings</span>
+                <a href="{% url 'custom_admin_tour_bookings' %}" class="btn btn-sm btn-ca-primary">View All</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table ca-table mb-0">
+                    <thead><tr>
+                        <th>Booking ID</th><th>Customer</th><th>Tour</th><th>Amount</th><th>Status</th>
+                    </tr></thead>
+                    <tbody>
+                        {% for b in recent_bookings %}
+                        <tr>
+                            <td><span class="fw-semibold text-warning">{{ b.booking_id }}</span></td>
+                            <td>{{ b.user.get_full_name|default:b.user.username }}</td>
+                            <td>{{ b.tour.title|truncatewords:4 }}</td>
+                            <td>₹{{ b.total_amount }}</td>
+                            <td><span class="badge status-{{ b.status }}">{{ b.get_status_display }}</span></td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5" class="text-center text-muted py-3">No bookings yet</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="ca-card">
+            <div class="ca-card-header">
+                <span><i class="bi bi-envelope-fill text-info me-2"></i>Recent Messages</span>
+                <a href="{% url 'custom_admin_messages' %}" class="btn btn-sm btn-ca-primary">View All</a>
+            </div>
+            <div class="p-0">
+                {% for msg in recent_messages %}
+                <div class="d-flex align-items-start gap-3 p-3 border-bottom {% if not msg.is_read %}bg-warning bg-opacity-10{% endif %}">
+                    <div class="rounded-circle bg-warning d-flex align-items-center justify-content-center flex-shrink-0" style="width:36px;height:36px;">
+                        <i class="bi bi-person-fill text-white small"></i>
+                    </div>
+                    <div class="flex-grow-1 overflow-hidden">
+                        <div class="d-flex justify-content-between">
+                            <span class="fw-semibold small">{{ msg.name }}</span>
+                            <span class="text-muted" style="font-size:0.7rem;">{{ msg.created_at|timesince }} ago</span>
+                        </div>
+                        <p class="text-muted mb-0" style="font-size:0.78rem;">{{ msg.subject|truncatewords:6 }}</p>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center text-muted py-4 small">No messages</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

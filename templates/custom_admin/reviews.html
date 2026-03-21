@@ -1,0 +1,117 @@
+{% extends 'custom_admin/base.html' %}
+{% block title %}Tour Reviews{% endblock %}
+{% block page_title %}Tour Reviews{% endblock %}
+
+{% block content %}
+<div class="ca-card mb-4">
+    <div class="ca-card-header">
+        <span><i class="bi bi-chat-square-text-fill text-warning me-2"></i>Tour Reviews
+            {% if pending_count %}<span class="badge bg-danger ms-2">{{ pending_count }} pending</span>{% endif %}
+        </span>
+    </div>
+    <div class="p-3 border-bottom">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-5">
+                <input type="text" name="q" value="{{ q }}" class="form-control form-control-sm" placeholder="Search tour or user...">
+            </div>
+            <div class="col-md-4">
+                <select name="status" class="form-select form-select-sm">
+                    <option value="">All Reviews</option>
+                    <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending Approval</option>
+                    <option value="approved" {% if status_filter == 'approved' %}selected{% endif %}>Approved</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-ca-primary btn-sm w-100">Filter</button>
+            </div>
+        </form>
+    </div>
+    <div class="table-responsive">
+        <table class="table ca-table mb-0">
+            <thead>
+                <tr>
+                    <th>Tour</th>
+                    <th>User</th>
+                    <th>Title</th>
+                    <th>Rating</th>
+                    <th>Comment</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for review in reviews %}
+                <tr>
+                    <td>
+                        <a href="{% url 'tour_detail' review.tour.slug %}" target="_blank" class="text-warning text-decoration-none fw-semibold small">
+                            {{ review.tour.title|truncatewords:4 }}
+                        </a>
+                    </td>
+                    <td class="small">{{ review.user.get_full_name|default:review.user.username }}</td>
+                    <td class="small fw-semibold">{{ review.title|truncatewords:5 }}</td>
+                    <td>
+                        <span class="text-warning">
+                            {% for i in "12345" %}{% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}{% endfor %}
+                        </span>
+                        <small class="text-muted">({{ review.rating }}/5)</small>
+                    </td>
+                    <td class="small text-muted" style="max-width:200px;">{{ review.comment|truncatewords:10 }}</td>
+                    <td class="small text-muted">{{ review.created_at|date:"d M Y" }}</td>
+                    <td>
+                        {% if review.is_approved %}
+                        <span class="badge bg-success">Approved</span>
+                        {% else %}
+                        <span class="badge bg-warning text-dark">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <form method="post" action="{% url 'custom_admin_review_approve' review.pk %}">
+                                {% csrf_token %}
+                                <button class="btn btn-sm {% if review.is_approved %}btn-outline-secondary{% else %}btn-success{% endif %}" title="{% if review.is_approved %}Hide{% else %}Approve{% endif %}">
+                                    <i class="bi bi-{% if review.is_approved %}eye-slash{% else %}check-lg{% endif %}"></i>
+                                </button>
+                            </form>
+                            <form method="post" action="{% url 'custom_admin_review_delete' review.pk %}" onsubmit="return confirm('Delete this review?')">
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-outline-danger" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted py-4">
+                        <i class="bi bi-chat-square-text d-block fs-2 mb-2"></i>
+                        No reviews found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if reviews.has_other_pages %}
+    <div class="p-3 d-flex justify-content-center">
+        <nav>
+            <ul class="pagination pagination-sm mb-0">
+                {% if reviews.has_previous %}
+                <li class="page-item"><a class="page-link" href="?page={{ reviews.previous_page_number }}&status={{ status_filter }}&q={{ q }}">«</a></li>
+                {% endif %}
+                {% for num in reviews.paginator.page_range %}
+                <li class="page-item {% if reviews.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}&status={{ status_filter }}&q={{ q }}">{{ num }}</a>
+                </li>
+                {% endfor %}
+                {% if reviews.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{ reviews.next_page_number }}&status={{ status_filter }}&q={{ q }}">»</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

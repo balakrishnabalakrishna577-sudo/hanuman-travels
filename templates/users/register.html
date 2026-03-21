@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="py-5 bg-light min-vh-100 d-flex align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-sm p-4">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-airplane-fill text-warning fs-1"></i>
+                        <h4 class="fw-bold mt-2">Create Account</h4>
+                        <p class="text-muted">Join Hanuman Tours and Travels for exclusive deals</p>
+                    </div>
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">First Name</label>
+                                {{ form.first_name }}
+                                {% if form.first_name.errors %}<div class="text-danger small">{{ form.first_name.errors }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Last Name</label>
+                                {{ form.last_name }}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold small">Username</label>
+                                {{ form.username }}
+                                {% if form.username.errors %}<div class="text-danger small">{{ form.username.errors }}</div>{% endif %}
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold small">Email</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Password</label>
+                                {{ form.password1 }}
+                                {% if form.password1.errors %}<div class="text-danger small">{{ form.password1.errors }}</div>{% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Confirm Password</label>
+                                {{ form.password2 }}
+                                {% if form.password2.errors %}<div class="text-danger small">{{ form.password2.errors }}</div>{% endif %}
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-warning w-100 fw-bold btn-lg">
+                                    <i class="bi bi-person-plus me-2"></i>Create Account
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <p class="text-center mt-3 text-muted small">Already have an account? <a href="{% url 'login' %}" class="text-warning fw-semibold">Login here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+""

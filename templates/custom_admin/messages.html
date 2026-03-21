@@ -1,0 +1,81 @@
+{% extends 'custom_admin/base.html' %}
+{% block title %}Contact Messages{% endblock %}
+{% block page_title %}Contact Messages{% endblock %}
+
+{% block content %}
+<div class="ca-card">
+    <div class="ca-card-header">
+        <span><i class="bi bi-envelope-fill text-info me-2"></i>Contact Messages</span>
+        <div class="d-flex gap-2">
+            <form method="get" class="d-flex gap-2">
+                <select name="status" class="form-select form-select-sm" style="width:130px;" onchange="this.form.submit()">
+                    <option value="">All</option>
+                    <option value="unread" {% if request.GET.status == 'unread' %}selected{% endif %}>Unread</option>
+                    <option value="read" {% if request.GET.status == 'read' %}selected{% endif %}>Read</option>
+                </select>
+            </form>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table ca-table mb-0">
+            <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Subject</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+                {% for msg in messages_list %}
+                <tr class="{% if not msg.is_read %}table-warning bg-opacity-25{% endif %}">
+                    <td class="fw-semibold">{{ msg.name }}</td>
+                    <td><a href="mailto:{{ msg.email }}" class="text-decoration-none">{{ msg.email }}</a></td>
+                    <td>{{ msg.phone|default:"-" }}</td>
+                    <td>{{ msg.subject|truncatewords:6 }}</td>
+                    <td class="text-muted small">{{ msg.created_at|date:"d M Y, H:i" }}</td>
+                    <td>
+                        {% if msg.is_read %}
+                        <span class="badge bg-success">Read</span>
+                        {% else %}
+                        <span class="badge bg-warning text-dark">Unread</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <button class="btn btn-xs btn-outline-info" style="font-size:0.72rem;padding:2px 8px;"
+                                data-bs-toggle="modal" data-bs-target="#msgModal{{ msg.id }}">View</button>
+                            {% if not msg.is_read %}
+                            <form method="post" action="{% url 'custom_admin_mark_read' msg.id %}">
+                                {% csrf_token %}
+                                <button class="btn btn-xs btn-outline-success" style="font-size:0.72rem;padding:2px 8px;">Mark Read</button>
+                            </form>
+                            {% endif %}
+                            <form method="post" action="{% url 'custom_admin_delete_message' msg.id %}" onsubmit="return confirm('Delete?')">
+                                {% csrf_token %}
+                                <button class="btn btn-xs btn-outline-danger" style="font-size:0.72rem;padding:2px 8px;">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <!-- Modal -->
+                <div class="modal fade" id="msgModal{{ msg.id }}" tabindex="-1">
+                    <div class="modal-dialog"><div class="modal-content">
+                        <div class="modal-header bg-warning">
+                            <h6 class="modal-title fw-bold">{{ msg.subject }}</h6>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>From:</strong> {{ msg.name }} ({{ msg.email }})</p>
+                            {% if msg.phone %}<p><strong>Phone:</strong> {{ msg.phone }}</p>{% endif %}
+                            <p><strong>Date:</strong> {{ msg.created_at|date:"d M Y, H:i" }}</p>
+                            <hr>
+                            <p>{{ msg.message }}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="mailto:{{ msg.email }}" class="btn btn-sm btn-ca-primary">Reply via Email</a>
+                            <button class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div></div>
+                </div>
+                {% empty %}
+                <tr><td colspan="7" class="text-center text-muted py-4">No messages</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'custom_admin/base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+
+        <!-- User Info Strip -->
+        <div class="ca-card mb-4">
+            <div class="p-3 d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-warning d-flex align-items-center justify-content-center fw-bold text-dark"
+                     style="width:52px;height:52px;font-size:1.3rem;flex-shrink:0;">
+                    {{ user_obj.username|first|upper }}
+                </div>
+                <div>
+                    <div class="fw-bold">{{ user_obj.get_full_name|default:user_obj.username }}</div>
+                    <div class="text-muted small">{{ user_obj.email }} &nbsp;·&nbsp; Joined {{ user_obj.date_joined|date:"d M Y" }}</div>
+                </div>
+                <div class="ms-auto">
+                    {% if user_obj.is_staff %}
+                    <span class="badge bg-warning text-dark">Staff</span>
+                    {% else %}
+                    <span class="badge bg-secondary">User</span>
+                    {% endif %}
+                    {% if user_obj.is_active %}
+                    <span class="badge bg-success ms-1">Active</span>
+                    {% else %}
+                    <span class="badge bg-danger ms-1">Inactive</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Account Details -->
+            <div class="ca-card mb-4">
+                <div class="ca-card-header">
+                    <span><i class="bi bi-person-fill text-warning me-2"></i>Account Details</span>
+                </div>
+                <div class="p-4">
+                    <div class="row g-3">
+                        {% for field in user_form %}
+                        <div class="{% if field.field.widget.input_type == 'checkbox' %}col-12{% else %}col-md-6{% endif %}">
+                            {% if field.field.widget.input_type == 'checkbox' %}
+                            <div class="form-check mt-2">
+                                {{ field }}
+                                <label class="form-check-label fw-semibold small" for="{{ field.id_for_label }}">
+                                    {{ field.label }}
+                                </label>
+                            </div>
+                            {% else %}
+                            <label class="ca-form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% endif %}
+                            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Details -->
+            {% if profile_form %}
+            <div class="ca-card mb-4">
+                <div class="ca-card-header">
+                    <span><i class="bi bi-card-text text-warning me-2"></i>Profile Details</span>
+                </div>
+                <div class="p-4">
+                    <div class="row g-3">
+                        {% for field in profile_form %}
+                        <div class="{% if field.field.widget.input_type == 'textarea' %}col-12{% else %}col-md-6{% endif %}">
+                            <label class="ca-form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors.0 }}</div>{% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-ca-primary px-4">
+                    <i class="bi bi-check-lg me-1"></i>Save Changes
+                </button>
+                <a href="{{ back_url }}" class="btn btn-outline-secondary px-4">Cancel</a>
+            </div>
+        </form>
+
+    </div>
+</div>
+{% endblock %}

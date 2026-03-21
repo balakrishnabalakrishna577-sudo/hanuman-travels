@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /users/dashboard/
+Disallow: /bookings/
+
+Sitemap: https://www.hanumantoursandtravels.com/sitemap.xml

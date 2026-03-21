@@ -1,0 +1,278 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Airport Pickup & Drop - Hanuman Tours and Travels{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<div class="py-5 text-white text-center" style="background:linear-gradient(135deg,rgba(255,140,0,0.92),rgba(0,0,0,0.85)),url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1200&q=80') center/cover;">
+    <div class="container">
+        <i class="bi bi-airplane-fill fs-1 mb-3 d-block"></i>
+        <h1 class="fw-bold display-5">Airport Pickup & Drop</h1>
+        <p class="lead opacity-90">Comfortable, on-time airport transfers with professional drivers</p>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-warning">Home</a></li>
+                <li class="breadcrumb-item active text-white">Airport Transfer</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<!-- Why Choose Us -->
+<section class="py-4 bg-warning">
+    <div class="container">
+        <div class="row text-center g-3">
+            <div class="col-6 col-md-3">
+                <i class="bi bi-clock-fill fs-3 text-dark d-block mb-1"></i>
+                <small class="fw-semibold text-dark">On-Time Guarantee</small>
+            </div>
+            <div class="col-6 col-md-3">
+                <i class="bi bi-shield-check-fill fs-3 text-dark d-block mb-1"></i>
+                <small class="fw-semibold text-dark">Safe & Reliable</small>
+            </div>
+            <div class="col-6 col-md-3">
+                <i class="bi bi-snow fs-3 text-dark d-block mb-1"></i>
+                <small class="fw-semibold text-dark">AC Vehicles</small>
+            </div>
+            <div class="col-6 col-md-3">
+                <i class="bi bi-headset fs-3 text-dark d-block mb-1"></i>
+                <small class="fw-semibold text-dark">24/7 Support</small>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Cards -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h4 class="fw-bold">Vehicle Options & Pricing</h4>
+            <p class="text-muted small">One-way airport transfer rates (both-way = 2x)</p>
+        </div>
+        <div class="row g-3 justify-content-center">
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm text-center p-3 h-100">
+                    <i class="bi bi-car-front-fill text-warning fs-2 mb-2"></i>
+                    <h6 class="fw-bold">Sedan</h6>
+                    <small class="text-muted">1–4 Passengers</small>
+                    <div class="fw-bold text-warning fs-5 mt-2">₹800</div>
+                    <small class="text-muted">per trip</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm text-center p-3 h-100">
+                    <i class="bi bi-truck-front-fill text-warning fs-2 mb-2"></i>
+                    <h6 class="fw-bold">SUV</h6>
+                    <small class="text-muted">1–6 Passengers</small>
+                    <div class="fw-bold text-warning fs-5 mt-2">₹1,200</div>
+                    <small class="text-muted">per trip</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm text-center p-3 h-100">
+                    <i class="bi bi-bus-front-fill text-warning fs-2 mb-2"></i>
+                    <h6 class="fw-bold">Tempo Traveller</h6>
+                    <small class="text-muted">7–12 Passengers</small>
+                    <div class="fw-bold text-warning fs-5 mt-2">₹2,000</div>
+                    <small class="text-muted">per trip</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card border-0 shadow-sm text-center p-3 h-100">
+                    <i class="bi bi-bus-front text-warning fs-2 mb-2"></i>
+                    <h6 class="fw-bold">Mini Bus</h6>
+                    <small class="text-muted">13–20 Passengers</small>
+                    <div class="fw-bold text-warning fs-5 mt-2">₹3,500</div>
+                    <small class="text-muted">per trip</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Booking Form -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-warning text-dark py-3">
+                        <h5 class="fw-bold mb-0"><i class="bi bi-calendar-check me-2"></i>Book Airport Transfer</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        {% if messages %}
+                        {% for msg in messages %}
+                        <div class="alert alert-{{ msg.tags }} alert-dismissible fade show">{{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+                        {% endfor %}
+                        {% endif %}
+
+                        <form method="post" id="transferForm">
+                            {% csrf_token %}
+                            <div class="row g-3">
+
+                                <!-- Transfer Type -->
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Transfer Type <span class="text-danger">*</span></label>
+                                    <div class="d-flex gap-3 flex-wrap">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="transfer_type" id="t_pickup" value="pickup" required>
+                                            <label class="form-check-label" for="t_pickup"><i class="bi bi-arrow-down-circle-fill text-success me-1"></i>Airport Pickup</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="transfer_type" id="t_drop" value="drop">
+                                            <label class="form-check-label" for="t_drop"><i class="bi bi-arrow-up-circle-fill text-danger me-1"></i>Airport Drop</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="transfer_type" id="t_both" value="both">
+                                            <label class="form-check-label" for="t_both"><i class="bi bi-arrow-left-right text-warning me-1"></i>Both Pickup & Drop</label>
+                                        </div>
+                                    </div>
+                                    {% if form.transfer_type.errors %}<div class="text-danger small mt-1">{{ form.transfer_type.errors.0 }}</div>{% endif %}
+                                </div>
+
+                                <!-- Airport & Flight -->
+                                <div class="col-md-8">
+                                    <label class="form-label fw-semibold">Airport Name <span class="text-danger">*</span></label>
+                                    {{ form.airport_name }}
+                                    {% if form.airport_name.errors %}<div class="text-danger small">{{ form.airport_name.errors.0 }}</div>{% endif %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Flight Number</label>
+                                    {{ form.flight_number }}
+                                </div>
+
+                                <!-- Passenger Info -->
+                                <div class="col-12"><hr class="my-1"><small class="fw-semibold text-muted text-uppercase">Passenger Details</small></div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
+                                    {{ form.passenger_name }}
+                                    {% if form.passenger_name.errors %}<div class="text-danger small">{{ form.passenger_name.errors.0 }}</div>{% endif %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Phone <span class="text-danger">*</span></label>
+                                    {{ form.passenger_phone }}
+                                    {% if form.passenger_phone.errors %}<div class="text-danger small">{{ form.passenger_phone.errors.0 }}</div>{% endif %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+                                    {{ form.passenger_email }}
+                                    {% if form.passenger_email.errors %}<div class="text-danger small">{{ form.passenger_email.errors.0 }}</div>{% endif %}
+                                </div>
+
+                                <!-- Addresses -->
+                                <div class="col-12"><hr class="my-1"><small class="fw-semibold text-muted text-uppercase">Locations</small></div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Pickup Address <span class="text-danger">*</span></label>
+                                    {{ form.pickup_address }}
+                                    {% if form.pickup_address.errors %}<div class="text-danger small">{{ form.pickup_address.errors.0 }}</div>{% endif %}
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold">Drop Address <span class="text-danger">*</span></label>
+                                    {{ form.drop_address }}
+                                    {% if form.drop_address.errors %}<div class="text-danger small">{{ form.drop_address.errors.0 }}</div>{% endif %}
+                                </div>
+
+                                <!-- Date & Time -->
+                                <div class="col-12"><hr class="my-1"><small class="fw-semibold text-muted text-uppercase">Schedule</small></div>
+                                <div class="col-md-3">
+                                    <label class="form-label fw-semibold">Pickup Date <span class="text-danger">*</span></label>
+                                    {{ form.pickup_date }}
+                                    {% if form.pickup_date.errors %}<div class="text-danger small">{{ form.pickup_date.errors.0 }}</div>{% endif %}
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label fw-semibold">Pickup Time <span class="text-danger">*</span></label>
+                                    {{ form.pickup_time }}
+                                    {% if form.pickup_time.errors %}<div class="text-danger small">{{ form.pickup_time.errors.0 }}</div>{% endif %}
+                                </div>
+                                <div class="col-md-3" id="returnDateDiv" style="display:none;">
+                                    <label class="form-label fw-semibold">Return Date</label>
+                                    {{ form.return_date }}
+                                    {% if form.return_date.errors %}<div class="text-danger small">{{ form.return_date.errors.0 }}</div>{% endif %}
+                                </div>
+                                <div class="col-md-3" id="returnTimeDiv" style="display:none;">
+                                    <label class="form-label fw-semibold">Return Time</label>
+                                    {{ form.return_time }}
+                                    {% if form.return_time.errors %}<div class="text-danger small">{{ form.return_time.errors.0 }}</div>{% endif %}
+                                </div>
+
+                                <!-- Vehicle & Passengers -->
+                                <div class="col-12"><hr class="my-1"><small class="fw-semibold text-muted text-uppercase">Vehicle & Passengers</small></div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Vehicle Type <span class="text-danger">*</span></label>
+                                    {{ form.vehicle_type }}
+                                    {% if form.vehicle_type.errors %}<div class="text-danger small">{{ form.vehicle_type.errors.0 }}</div>{% endif %}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">No. of Passengers</label>
+                                    {{ form.passengers }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Luggage Bags</label>
+                                    {{ form.luggage_count }}
+                                </div>
+
+                                <!-- Price Preview -->
+                                <div class="col-12">
+                                    <div class="alert alert-warning d-flex align-items-center gap-3 mb-0">
+                                        <i class="bi bi-currency-rupee fs-4"></i>
+                                        <div>
+                                            <strong>Estimated Fare: <span id="farePreview">₹800</span></strong>
+                                            <div class="small text-muted">Final amount confirmed after booking</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Special Requests -->
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold">Special Requests</label>
+                                    {{ form.special_requests }}
+                                </div>
+
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-warning btn-lg px-5 fw-semibold w-100">
+                                        <i class="bi bi-check-circle me-2"></i>Confirm Airport Transfer Booking
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const pricing = { sedan: 800, suv: 1200, tempo: 2000, bus: 3500 };
+
+function updateFare() {
+    const vtype = document.getElementById('id_vehicle_type').value;
+    const ttype = document.querySelector('input[name="transfer_type"]:checked')?.value;
+    let base = pricing[vtype] || 800;
+    let total = ttype === 'both' ? base * 2 : base;
+    document.getElementById('farePreview').textContent = '₹' + total.toLocaleString('en-IN');
+}
+
+function toggleReturn() {
+    const ttype = document.querySelector('input[name="transfer_type"]:checked')?.value;
+    const show = ttype === 'both';
+    document.getElementById('returnDateDiv').style.display = show ? '' : 'none';
+    document.getElementById('returnTimeDiv').style.display = show ? '' : 'none';
+    updateFare();
+}
+
+document.querySelectorAll('input[name="transfer_type"]').forEach(r => r.addEventListener('change', toggleReturn));
+document.getElementById('id_vehicle_type').addEventListener('change', updateFare);
+
+// Style all form inputs
+document.querySelectorAll('#transferForm input:not([type=radio]):not([type=submit]), #transferForm select, #transferForm textarea')
+    .forEach(el => el.classList.add('form-control'));
+document.querySelectorAll('#transferForm select').forEach(el => {
+    el.classList.remove('form-control');
+    el.classList.add('form-select');
+});
+</script>
+{% endblock %}

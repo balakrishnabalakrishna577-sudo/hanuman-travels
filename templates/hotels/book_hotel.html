@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header py-4 bg-warning text-dark text-center">
+    <div class="container"><h2 class="fw-bold">Book Hotel</h2><p>{{ hotel.name }}</p></div>
+</div>
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm p-4">
+                    <h5 class="fw-bold mb-4">Booking Details</h5>
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-12"><label class="form-label fw-semibold">Room Type</label>{{ form.room_type }}</div>
+                            <div class="col-md-6"><label class="form-label fw-semibold">Check-in Date</label>{{ form.check_in }}</div>
+                            <div class="col-md-6"><label class="form-label fw-semibold">Check-out Date</label>{{ form.check_out }}</div>
+                            <div class="col-md-6"><label class="form-label fw-semibold">Number of Rooms</label>{{ form.num_rooms }}</div>
+                            <div class="col-md-6"><label class="form-label fw-semibold">Number of Guests</label>{{ form.num_guests }}</div>
+                            <div class="col-12"><label class="form-label fw-semibold">Special Requests</label>{{ form.special_requests }}</div>
+                            <div class="col-12"><button type="submit" class="btn btn-warning btn-lg w-100 fw-bold">Confirm Booking</button></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm p-4">
+                    <h6 class="fw-bold mb-3">Hotel Summary</h6>
+                    {% if hotel.image %}<img src="{{ hotel.image.url }}" class="img-fluid rounded-3 mb-3" alt="{{ hotel.name }}">{% endif %}
+                    <h6 class="fw-bold">{{ hotel.name }}</h6>
+                    <p class="text-muted small"><i class="bi bi-geo-alt-fill text-warning me-1"></i>{{ hotel.destination.name }}</p>
+                    <p class="text-muted small"><i class="bi bi-clock me-1"></i>Check-in: {{ hotel.check_in_time }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

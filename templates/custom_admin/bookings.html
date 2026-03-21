@@ -1,0 +1,106 @@
+{% extends 'custom_admin/base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="ca-card">
+    <div class="ca-card-header">
+        <span><i class="bi bi-calendar-check-fill text-warning me-2"></i>{{ title }}</span>
+        <div class="d-flex gap-2">
+            <form method="get" class="d-flex gap-2">
+                <select name="status" class="form-select form-select-sm" style="width:140px;" onchange="this.form.submit()">
+                    <option value="">All Status</option>
+                    <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="confirmed" {% if request.GET.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                    <option value="cancelled" {% if request.GET.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                    <option value="completed" {% if request.GET.status == 'completed' %}selected{% endif %}>Completed</option>
+                </select>
+                <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Search..." class="form-control form-control-sm" style="width:180px;">
+                <button class="btn btn-sm btn-ca-primary">Search</button>
+            </form>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table ca-table mb-0">
+            <thead><tr>
+                <th>Booking ID</th>
+                <th>Customer</th>
+                {% if booking_type == 'tour' %}<th>Tour</th><th>Travel Date</th>
+                {% elif booking_type == 'hotel' %}<th>Hotel</th><th>Check-in</th>
+                {% else %}<th>Vehicle</th><th>Pickup</th>{% endif %}
+                <th>Amount</th><th>Status</th>
+                {% if booking_type == 'tour' %}<th>Payment</th>{% endif %}
+                <th>Date</th><th>Actions</th>
+            </tr></thead>
+            <tbody>
+                {% for b in bookings %}
+                <tr>
+                    <td><span class="fw-semibold text-warning">{{ b.booking_id }}</span></td>
+                    <td>
+                        <div class="fw-semibold small">{{ b.user.get_full_name|default:b.user.username }}</div>
+                        <div class="text-muted" style="font-size:0.72rem;">{{ b.user.email }}</div>
+                    </td>
+                    {% if booking_type == 'tour' %}
+                    <td>{{ b.tour.title|truncatewords:4 }}</td>
+                    <td>{{ b.travel_date }}</td>
+                    {% elif booking_type == 'hotel' %}
+                    <td>{{ b.hotel.name|truncatewords:3 }}</td>
+                    <td>{{ b.check_in }}</td>
+                    {% else %}
+                    <td>{{ b.vehicle.name }}</td>
+                    <td>{{ b.pickup_date }}</td>
+                    {% endif %}
+                    <td class="fw-semibold">₹{{ b.total_amount }}</td>
+                    <td><span class="badge status-{{ b.status }}">{{ b.get_status_display }}</span></td>
+                    {% if booking_type == 'tour' %}
+                    <td>
+                        <form method="post" action="{% url 'custom_admin_payment_status' b.id %}">
+                            {% csrf_token %}
+                            <select name="payment_status" class="form-select form-select-sm" style="width:100px;" onchange="this.form.submit()">
+                                <option value="unpaid"   {% if b.payment_status == 'unpaid' %}selected{% endif %}>Unpaid</option>
+                                <option value="partial"  {% if b.payment_status == 'partial' %}selected{% endif %}>Partial</option>
+                                <option value="paid"     {% if b.payment_status == 'paid' %}selected{% endif %}>Paid</option>
+                                <option value="refunded" {% if b.payment_status == 'refunded' %}selected{% endif %}>Refunded</option>
+                            </select>
+                        </form>
+                    </td>
+                    {% endif %}
+                    <td><span class="text-muted small">{{ b.created_at|date:"d M Y" }}</span></td>
+                    <td>
+                        <div class="d-flex gap-1 align-items-center">
+                            {% if booking_type == 'tour' %}
+                            <a href="{% url 'custom_admin_tour_booking_edit' b.id %}" class="btn btn-xs btn-outline-warning" style="font-size:0.72rem;padding:2px 8px;">Edit</a>
+                            {% elif booking_type == 'hotel' %}
+                            <a href="{% url 'custom_admin_hotel_booking_edit' b.id %}" class="btn btn-xs btn-outline-warning" style="font-size:0.72rem;padding:2px 8px;">Edit</a>
+                            {% else %}
+                            <a href="{% url 'custom_admin_car_booking_edit' b.id %}" class="btn btn-xs btn-outline-warning" style="font-size:0.72rem;padding:2px 8px;">Edit</a>
+                            {% endif %}
+                            <form method="post" action="{% url 'custom_admin_booking_status' booking_type b.id %}">
+                                {% csrf_token %}
+                                <select name="status" class="form-select form-select-sm" style="width:110px;" onchange="this.form.submit()">
+                                    <option value="pending" {% if b.status == 'pending' %}selected{% endif %}>Pending</option>
+                                    <option value="confirmed" {% if b.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                                    <option value="cancelled" {% if b.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                                    <option value="completed" {% if b.status == 'completed' %}selected{% endif %}>Completed</option>
+                                </select>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="9" class="text-center text-muted py-4">No bookings found</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if bookings.has_other_pages %}
+    <div class="p-3 border-top">
+        <nav><ul class="pagination pagination-sm mb-0 justify-content-center">
+            {% if bookings.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ bookings.previous_page_number }}&status={{ request.GET.status }}&q={{ request.GET.q }}">«</a></li>{% endif %}
+            {% for n in bookings.paginator.page_range %}<li class="page-item {% if bookings.number == n %}active{% endif %}"><a class="page-link" href="?page={{ n }}&status={{ request.GET.status }}&q={{ request.GET.q }}">{{ n }}</a></li>{% endfor %}
+            {% if bookings.has_next %}<li class="page-item"><a class="page-link" href="?page={{ bookings.next_page_number }}&status={{ request.GET.status }}&q={{ request.GET.q }}">»</a></li>{% endif %}
+        </ul></nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Search Tours - Hanuman Tours and Travels{% endblock %}
+
+{% block content %}
+<div class="page-header py-4 bg-warning text-dark text-center">
+    <div class="container">
+        <h2 class="fw-bold">Search Results {% if query %}for "{{ query }}"{% endif %}</h2>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+        <!-- Search Form -->
+        <form action="{% url 'search' %}" method="get" class="row g-2 mb-5 p-4 bg-light rounded-3 shadow-sm">
+            <div class="col-md-4 position-relative">
+                <input type="text" name="q" id="searchInput" class="form-control" placeholder="Search tours, destinations..."
+                       value="{{ query }}" autocomplete="off">
+                <div id="searchDropdown" class="position-absolute w-100 bg-white border rounded-3 shadow-sm mt-1"
+                     style="z-index:1000;display:none;top:100%;left:0;max-height:320px;overflow-y:auto;">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <select name="destination" class="form-select">
+                    <option value="">All Destinations</option>
+                    {% for dest in destinations %}
+                    <option value="{{ dest.id }}" {% if destination == dest.id|stringformat:"s" %}selected{% endif %}>
+                        {{ dest.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="number" name="max_price" class="form-control" placeholder="Max Price (₹)"
+                       value="{{ max_price }}">
+            </div>
+            <div class="col-md-2">
+                <input type="number" name="duration" class="form-control" placeholder="Max Days"
+                       value="{{ duration }}">
+            </div>
+            <div class="col-md-1">
+                <button type="submit" class="btn btn-warning w-100 fw-semibold">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </form>
+
+        <!-- Results count -->
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <p class="text-muted mb-0">
+                Found <strong>{{ tours|length }}</strong> tour{{ tours|length|pluralize }}
+                {% if query %} for "<strong>{{ query }}</strong>"{% endif %}
+            </p>
+            {% if query or destination or max_price or duration %}
+            <a href="{% url 'search' %}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-x-circle me-1"></i>Clear Filters
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- Results Grid -->
+        <div class="row g-4">
+            {% for tour in tours %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card tour-card h-100 border-0 shadow-sm">
+                    <div class="position-relative overflow-hidden" style="height:210px;">
+                        {% with img=tour.image_src %}
+                        {% if img %}
+                        <img src="{{ img }}" class="w-100 h-100" style="object-fit:cover;" alt="{{ tour.title }}"
+                             onerror="this.src='https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=600&q=80'">
+                        {% else %}
+                        {% with dest=tour.destination.name|lower %}
+                        {% if "goa" in dest %}<img src="https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=600&q=80" class="w-100 h-100" style="object-fit:cover;" alt="{{ tour.title }}">
+                        {% elif "kerala" in dest %}<img src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=600&q=80" class="w-100 h-100" style="object-fit:cover;" alt="{{ tour.title }}">
+                        {% elif "rajasthan" in dest or "jaipur" in dest or "jodhpur" in dest %}<img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=600&q=80" class="w-100 h-100" style="object-fit:cover;" alt="{{ tour.title }}">
+                        {% elif "manali" in dest or "shimla" in dest or "himachal" in dest %}<img src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=600&q=80" class="w-100 h-100" style="object-fit:cover;" alt="{{ tour.title }}">
+                        {% elif "andaman" in dest %}<img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&q=80" class="w-100 h-100" style="object-fit:cover;" alt="{{ tour.title }}">
+                        {% elif "agra" in dest or "delhi" in dest %}<img src="https://images.unsplash.com/photo-1548013146-72479768bada?w=600&q=80" class="w-100 h-100" style="object-fit:cover;" alt="{{ tour.title }}">
+                        {% elif "varanasi" in dest %}<img src="https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=600&q=80" class="w-100 h-100" style="object-fit:cover;" alt="{{ tour.title }}">
+                        {% else %}<img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=600&q=80" class="w-100 h-100" style="object-fit:cover;" alt="{{ tour.title }}">
+                        {% endif %}
+                        {% endwith %}
+                        {% endif %}
+                        {% endwith %}
+                        {% if tour.discount_percent > 0 %}
+                        <span class="badge bg-danger position-absolute top-0 end-0 m-2">{{ tour.discount_percent }}% OFF</span>
+                        {% endif %}
+                        <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2">{{ tour.get_tour_type_display }}</span>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="fw-bold mb-1">{{ tour.title }}</h6>
+                        <p class="text-muted small mb-1">
+                            <i class="bi bi-geo-alt-fill text-warning me-1"></i>{{ tour.destination.name }}
+                        </p>
+                        <div class="d-flex gap-3 mb-2">
+                            <span class="small text-muted"><i class="bi bi-clock me-1"></i>{{ tour.duration_days }}D/{{ tour.duration_nights }}N</span>
+                            <span class="small text-muted"><i class="bi bi-people me-1"></i>Max {{ tour.max_group_size }}</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            {% for i in "12345" %}
+                            <i class="bi bi-star{% if forloop.counter <= tour.avg_rating %}-fill{% endif %} text-warning small"></i>
+                            {% endfor %}
+                            <small class="text-muted ms-1">({{ tour.reviews.count }})</small>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white border-0 d-flex justify-content-between align-items-center pt-0">
+                        <div>
+                            {% if tour.discounted_price %}
+                            <small class="text-muted text-decoration-line-through d-block">₹{{ tour.price_per_person }}</small>
+                            <span class="fw-bold text-warning fs-5">₹{{ tour.discounted_price }}</span>
+                            {% else %}
+                            <span class="fw-bold text-warning fs-5">₹{{ tour.price_per_person }}</span>
+                            {% endif %}
+                            <small class="text-muted">/person</small>
+                        </div>
+                        <a href="{% url 'tour_detail' tour.slug %}" class="btn btn-warning btn-sm fw-semibold">
+                            View Details <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-search fs-1 text-muted d-block mb-3"></i>
+                <h5 class="text-muted">No tours found matching your search.</h5>
+                <p class="text-muted small">Try different keywords or remove some filters.</p>
+                <a href="{% url 'tour_list' %}" class="btn btn-warning mt-2 fw-semibold px-4">
+                    Browse All Tours <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    const input = document.getElementById('searchInput');
+    const dropdown = document.getElementById('searchDropdown');
+    if (!input || !dropdown) return;
+
+    let timer;
+
+    input.addEventListener('input', function () {
+        clearTimeout(timer);
+        const q = this.value.trim();
+        if (q.length < 2) { dropdown.style.display = 'none'; return; }
+
+        timer = setTimeout(() => {
+            fetch(`/search/suggestions/?q=${encodeURIComponent(q)}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (!data.results.length) { dropdown.style.display = 'none'; return; }
+                    dropdown.innerHTML = data.results.map(item => `
+                        <a href="${item.url}" class="d-flex align-items-center gap-2 px-3 py-2 text-decoration-none border-bottom suggestion-item"
+                           style="color:#333;">
+                            <span class="badge ${item.type === 'tour' ? 'bg-warning text-dark' : 'bg-info text-dark'} flex-shrink-0" style="font-size:0.65rem;">
+                                ${item.type === 'tour' ? 'Tour' : 'Dest'}
+                            </span>
+                            <span>
+                                <span class="fw-semibold small">${item.label}</span>
+                                <span class="text-muted small ms-1">— ${item.sub}</span>
+                            </span>
+                        </a>
+                    `).join('') + `
+                        <div class="px-3 py-2 text-center">
+                            <button type="submit" class="btn btn-warning btn-sm w-100 fw-semibold">
+                                <i class="bi bi-search me-1"></i>Search all results for "${q}"
+                            </button>
+                        </div>`;
+                    dropdown.style.display = 'block';
+                });
+        }, 250);
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.style.display = 'none';
+        }
+    });
+
+    input.addEventListener('keydown', function (e) {
+        const items = dropdown.querySelectorAll('.suggestion-item');
+        const active = dropdown.querySelector('.suggestion-item.active');
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (!active) { items[0]?.classList.add('active'); }
+            else {
+                active.classList.remove('active');
+                const next = active.nextElementSibling;
+                if (next && next.classList.contains('suggestion-item')) next.classList.add('active');
+                else items[0]?.classList.add('active');
+            }
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (active) {
+                active.classList.remove('active');
+                const prev = active.previousElementSibling;
+                if (prev && prev.classList.contains('suggestion-item')) prev.classList.add('active');
+            }
+        } else if (e.key === 'Enter') {
+            if (active) { e.preventDefault(); active.click(); }
+        } else if (e.key === 'Escape') {
+            dropdown.style.display = 'none';
+        }
+    });
+})();
+</script>
+<style>
+.suggestion-item:hover, .suggestion-item.active { background: #fff8ee !important; color: #ff8c00 !important; }
+</style>
+{% endblock %}

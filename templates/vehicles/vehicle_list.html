@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-header py-5 text-white text-center" style="background: linear-gradient(135deg, rgba(255,140,0,0.9), rgba(0,0,0,0.8)), url('{% static "images/hero1.jpg" %}') center/cover;">
+    <div class="container">
+        <h1 class="fw-bold display-5">Car Rental</h1>
+        <p class="lead">Comfortable vehicles for every journey</p>
+        <nav aria-label="breadcrumb"><ol class="breadcrumb justify-content-center">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-warning">Home</a></li>
+            <li class="breadcrumb-item active text-white">Car Rental</li>
+        </ol></nav>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+        <!-- Filter -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex gap-2 flex-wrap">
+                    <a href="{% url 'vehicle_list' %}" class="btn btn-{% if not request.GET.type %}warning{% else %}outline-warning{% endif %} btn-sm">All</a>
+                    {% for value, label in vehicle_types %}
+                    <a href="?type={{ value }}" class="btn btn-{% if request.GET.type == value %}warning{% else %}outline-warning{% endif %} btn-sm">{{ label }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            {% for vehicle in vehicles %}
+            <div class="col-lg-4 col-md-6" data-aos="fade-up">
+                <div class="card border-0 shadow-sm h-100">
+                    {% if vehicle.image %}
+                    <img src="{{ vehicle.image.url }}" class="card-img-top" style="height:220px;object-fit:cover;" alt="{{ vehicle.name }}">
+                    {% else %}
+                    {% with vtype=vehicle.vehicle_type %}
+                    {% if vtype == "sedan" %}
+                    <img src="https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=600&q=80" class="card-img-top" style="height:220px;object-fit:cover;" alt="{{ vehicle.name }}">
+                    {% elif vtype == "suv" %}
+                    <img src="https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=600&q=80" class="card-img-top" style="height:220px;object-fit:cover;" alt="{{ vehicle.name }}">
+                    {% elif vtype == "tempo" %}
+                    <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&q=80" class="card-img-top" style="height:220px;object-fit:cover;" alt="{{ vehicle.name }}">
+                    {% elif vtype == "bus" %}
+                    <img src="https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=600&q=80" class="card-img-top" style="height:220px;object-fit:cover;" alt="{{ vehicle.name }}">
+                    {% elif vtype == "luxury" %}
+                    <img src="https://images.unsplash.com/photo-1563720223185-11003d516935?w=600&q=80" class="card-img-top" style="height:220px;object-fit:cover;" alt="{{ vehicle.name }}">
+                    {% elif vtype == "bike" %}
+                    <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" class="card-img-top" style="height:220px;object-fit:cover;" alt="{{ vehicle.name }}">
+                    {% else %}
+                    <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600&q=80" class="card-img-top" style="height:220px;object-fit:cover;" alt="{{ vehicle.name }}">
+                    {% endif %}
+                    {% endwith %}
+                    {% endif %}
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="fw-bold mb-0">{{ vehicle.name }}</h6>
+                            <span class="badge bg-warning text-dark">{{ vehicle.get_vehicle_type_display }}</span>
+                        </div>
+                        <p class="text-muted small mb-2">{{ vehicle.model }}</p>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6"><small class="text-muted"><i class="bi bi-people me-1"></i>{{ vehicle.capacity }} Seats</small></div>
+                            <div class="col-6"><small class="text-muted"><i class="bi bi-{% if vehicle.is_ac %}snow{% else %}thermometer{% endif %} me-1"></i>{% if vehicle.is_ac %}AC{% else %}Non-AC{% endif %}</small></div>
+                            <div class="col-6"><small class="text-muted"><i class="bi bi-person-badge me-1"></i>{% if vehicle.driver_included %}Driver Included{% else %}Self Drive{% endif %}</small></div>
+                        </div>
+                        {% if vehicle.features %}
+                        <div class="mb-2">
+                            {% for feature in vehicle.features.splitlines|slice:":3" %}
+                            {% if feature %}<span class="badge bg-light text-dark me-1 mb-1 small">{{ feature }}</span>{% endif %}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer bg-white border-0 d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="fw-bold text-warning fs-5">₹{{ vehicle.price_per_day }}</span>
+                            <small class="text-muted">/day</small>
+                        </div>
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'book_vehicle' vehicle.id %}" class="btn btn-warning btn-sm fw-semibold">Book Now</a>
+                        {% else %}
+                        <a href="{% url 'login' %}" class="btn btn-warning btn-sm fw-semibold">Book Now</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-car-front-fill fs-1 text-muted d-block mb-3"></i>
+                <h5 class="text-muted">No vehicles available</h5>
+                <p>Add vehicles from the <a href="/admin/vehicles/vehicle/add/">admin panel</a>.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+{# Resolve the best hero image once #}
+{% with img=tour.image_src dest_img=tour.destination.image_src %}
+
+<!-- Tour Header -->
+<div class="page-header py-5 text-white" style="background: linear-gradient(135deg, rgba(0,0,0,0.65), rgba(255,140,0,0.75)),
+    url('{% if img %}{{ img }}{% else %}{{ dest_img }}{% endif %}') center/cover no-repeat;">
+    <div class="container py-3">
+        <nav aria-label="breadcrumb" class="mb-2">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-warning text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'tour_list' %}" class="text-warning text-decoration-none">Tours</a></li>
+                <li class="breadcrumb-item active text-white">{{ tour.title|truncatewords:5 }}</li>
+            </ol>
+        </nav>
+        <span class="badge bg-warning text-dark mb-2 px-3 py-2">{{ tour.get_tour_type_display }}</span>
+        <h1 class="fw-bold display-5 mb-3">{{ tour.title }}</h1>
+        <div class="d-flex flex-wrap gap-3">
+            <span class="d-flex align-items-center gap-1"><i class="bi bi-geo-alt-fill text-warning"></i>{{ tour.destination.name }}</span>
+            <span class="d-flex align-items-center gap-1"><i class="bi bi-clock text-warning"></i>{{ tour.duration_days }} Days / {{ tour.duration_nights }} Nights</span>
+            <span class="d-flex align-items-center gap-1"><i class="bi bi-people text-warning"></i>Max {{ tour.max_group_size }} People</span>
+            <span class="d-flex align-items-center gap-1"><i class="bi bi-bar-chart text-warning"></i>{{ tour.get_difficulty_display }}</span>
+        </div>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+
+            <!-- Main Content -->
+            <div class="col-lg-8">
+
+                <!-- Main Image / Carousel -->
+                {% if tour.images.all %}
+                <div id="tourGallery" class="carousel slide mb-4 rounded-3 overflow-hidden shadow" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        {% for tourimg in tour.images.all %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <img src="{{ tourimg.image.url }}" class="d-block w-100" style="height:420px;object-fit:cover;" alt="{{ tourimg.caption|default:tour.title }}">
+                            {% if tourimg.caption %}
+                            <div class="carousel-caption d-none d-md-block">
+                                <p class="mb-0 small bg-dark bg-opacity-50 px-2 py-1 rounded">{{ tourimg.caption }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% if tour.images.count > 1 %}
+                    <button class="carousel-control-prev" type="button" data-bs-target="#tourGallery" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#tourGallery" data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
+                    <div class="carousel-indicators">
+                        {% for tourimg in tour.images.all %}
+                        <button type="button" data-bs-target="#tourGallery" data-bs-slide-to="{{ forloop.counter0 }}"
+                            {% if forloop.first %}class="active"{% endif %}></button>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% elif img %}
+                <img src="{{ img }}" class="img-fluid rounded-3 mb-4 w-100 shadow" style="height:420px;object-fit:cover;" alt="{{ tour.title }}">
+
+                {% else %}
+                <img src="{{ dest_img }}" class="img-fluid rounded-3 mb-4 w-100 shadow" style="height:420px;object-fit:cover;" alt="{{ tour.destination.name }}">
+
+                {% endif %}
+                    {% elif 'kashmir' in dest %}https://images.unsplash.com/photo-1566837945700-30057527ade0?w=900&q=80
+                    {% elif 'ladakh' in dest %}https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=900&q=80
+                    {% elif 'ooty' in dest or 'wayanad' in dest %}https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80
+                    {% elif 'gokarna' in dest or 'murudeshwar' in dest %}https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900&q=80
+                    {% else %}https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=900&q=80
+                    {% endif %}"
+                    class="img-fluid rounded-3 mb-4 w-100 shadow" style="height:420px;object-fit:cover;" alt="{{ tour.title }}">
+                {% endif %}
+
+                <!-- Tabs -->
+                <ul class="nav nav-tabs mb-4" id="tourTabs">
+                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#overview">Overview</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#itinerary">Itinerary</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#inclusions">Inclusions</button></li>
+                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#reviews">Reviews ({{ reviews.count }})</button></li>
+                </ul>
+
+                <div class="tab-content">
+                    <!-- Overview -->
+                    <div class="tab-pane fade show active" id="overview">
+                        <h5 class="fw-bold mb-3">Tour Description</h5>
+                        <p class="text-muted lh-lg">{{ tour.description }}</p>
+                        {% if tour.highlights %}
+                        <h5 class="fw-bold mt-4 mb-3">Tour Highlights</h5>
+                        <ul class="list-unstyled">
+                            {% for highlight in tour.highlights.splitlines %}
+                            {% if highlight %}
+                            <li class="mb-2"><i class="bi bi-check-circle-fill text-warning me-2"></i>{{ highlight }}</li>
+                            {% endif %}
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+
+                    <!-- Itinerary -->
+                    <div class="tab-pane fade" id="itinerary">
+                        <h5 class="fw-bold mb-4">Day-by-Day Itinerary</h5>
+                        {% for day in tour.itinerary.all %}
+                        <div class="border rounded-3 mb-3 p-3">
+                            <div class="d-flex align-items-start gap-3">
+                                <span class="badge bg-warning text-dark flex-shrink-0 mt-1 px-3 py-2">Day {{ day.day }}</span>
+                                <div>
+                                    <h6 class="fw-bold mb-1">{{ day.title }}</h6>
+                                    <p class="text-muted small mb-1 lh-lg">{{ day.description }}</p>
+                                    {% if day.meals %}<small class="text-muted"><i class="bi bi-cup-hot me-1"></i>Meals: {{ day.meals }}</small>{% endif %}
+                                    {% if day.accommodation %}<br><small class="text-muted"><i class="bi bi-building me-1"></i>Stay: {{ day.accommodation }}</small>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted">Itinerary details will be provided upon booking.</p>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Inclusions -->
+                    <div class="tab-pane fade" id="inclusions">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <h5 class="fw-bold text-success mb-3"><i class="bi bi-check-circle-fill me-2"></i>Included</h5>
+                                {% for item in tour.included.all %}
+                                <div class="d-flex mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2 mt-1 flex-shrink-0"></i>
+                                    <span class="small">{{ item.item }}</span>
+                                </div>
+                                {% empty %}
+                                <p class="text-muted small">Details available on request.</p>
+                                {% endfor %}
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="fw-bold text-danger mb-3"><i class="bi bi-x-circle-fill me-2"></i>Excluded</h5>
+                                {% for item in tour.excluded.all %}
+                                <div class="d-flex mb-2">
+                                    <i class="bi bi-x-circle-fill text-danger me-2 mt-1 flex-shrink-0"></i>
+                                    <span class="small">{{ item.item }}</span>
+                                </div>
+                                {% empty %}
+                                <p class="text-muted small">Details available on request.</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reviews -->
+                    <div class="tab-pane fade" id="reviews">
+                        {% for review in reviews %}
+                        <div class="card border-0 bg-light mb-3 p-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <div>
+                                    <strong>{{ review.user.get_full_name|default:review.user.username }}</strong>
+                                    <div>
+                                        {% for i in "12345" %}
+                                        <i class="bi bi-star{% if forloop.counter <= review.rating %}-fill{% endif %} text-warning small"></i>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                            </div>
+                            <h6 class="fw-semibold">{{ review.title }}</h6>
+                            <p class="text-muted small mb-0">{{ review.comment }}</p>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted">No reviews yet. Be the first to review!</p>
+                        {% endfor %}
+
+                        {% if user.is_authenticated and not user_review %}
+                        <div class="card border-0 shadow-sm p-4 mt-4">
+                            <h6 class="fw-bold mb-3">Write a Review</h6>
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold">Rating</label>
+                                    {{ review_form.rating }}
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold">Title</label>
+                                    {{ review_form.title }}
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-semibold">Your Review</label>
+                                    {{ review_form.comment }}
+                                </div>
+                                <button type="submit" class="btn btn-warning btn-sm fw-semibold">Submit Review</button>
+                            </form>
+                        </div>
+                        {% elif not user.is_authenticated %}
+                        <div class="alert alert-warning mt-3">
+                            <a href="{% url 'login' %}">Login</a> to write a review.
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Booking Sidebar -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm p-4 sticky-top" style="top:80px;">
+                    <div class="text-center mb-3">
+                        {% if tour.discounted_price %}
+                        <small class="text-muted text-decoration-line-through d-block">₹{{ tour.price_per_person }}</small>
+                        <h3 class="fw-bold text-warning mb-0">₹{{ tour.discounted_price }}</h3>
+                        {% if tour.discount_percent %}<span class="badge bg-success">{{ tour.discount_percent }}% OFF</span>{% endif %}
+                        {% else %}
+                        <h3 class="fw-bold text-warning mb-0">₹{{ tour.price_per_person }}</h3>
+                        {% endif %}
+                        <small class="text-muted">per person</small>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center mb-3">
+                        {% for i in "12345" %}
+                        <i class="bi bi-star{% if forloop.counter <= tour.avg_rating %}-fill{% endif %} text-warning"></i>
+                        {% endfor %}
+                        <span class="ms-2 text-muted small">{{ tour.avg_rating }}/5 ({{ reviews.count }} reviews)</span>
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small text-muted"><i class="bi bi-clock me-2"></i>Duration</span>
+                            <span class="small fw-semibold">{{ tour.duration_days }}D / {{ tour.duration_nights }}N</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small text-muted"><i class="bi bi-people me-2"></i>Group Size</span>
+                            <span class="small fw-semibold">Max {{ tour.max_group_size }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="small text-muted"><i class="bi bi-person-check me-2"></i>Min Age</span>
+                            <span class="small fw-semibold">{{ tour.min_age }}+ years</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="small text-muted"><i class="bi bi-bar-chart me-2"></i>Difficulty</span>
+                            <span class="small fw-semibold">{{ tour.get_difficulty_display }}</span>
+                        </div>
+                    </div>
+                    <hr>
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'create_booking' tour.slug %}" class="btn btn-warning w-100 fw-bold btn-lg mb-2">
+                        <i class="bi bi-calendar-check me-2"></i>Book Now
+                    </a>
+                    {% else %}
+                    <a href="{% url 'login' %}?next={% url 'create_booking' tour.slug %}" class="btn btn-warning w-100 fw-bold btn-lg mb-2">
+                        <i class="bi bi-calendar-check me-2"></i>Book Now
+                    </a>
+                    {% endif %}
+                    <a href="https://wa.me/{{ WHATSAPP_NUMBER }}?text=I'm interested in {{ tour.title }}" class="btn btn-success w-100 mb-2">
+                        <i class="bi bi-whatsapp me-2"></i>Enquire on WhatsApp
+                    </a>
+                    <a href="{% url 'contact' %}" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-envelope me-2"></i>Send Enquiry
+                    </a>
+                    <hr>
+                    <p class="small text-muted mb-2 fw-semibold">Share this tour:</p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="https://wa.me/?text={{ tour.title }} - Check this tour! {{ request.build_absolute_uri }}"
+                           class="share-btn share-btn-wa" target="_blank" title="Share on WhatsApp">
+                            <i class="bi bi-whatsapp"></i>
+                        </a>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}"
+                           class="share-btn share-btn-fb" target="_blank" title="Share on Facebook">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="https://twitter.com/intent/tweet?text={{ tour.title }}&url={{ request.build_absolute_uri }}"
+                           class="share-btn share-btn-tw" target="_blank" title="Share on X">
+                            <i class="bi bi-twitter-x"></i>
+                        </a>
+                        <button class="share-btn share-btn-copy share-copy-btn" title="Copy link">
+                            <i class="bi bi-link-45deg me-1"></i>Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Tours -->
+        {% if related_tours %}
+        <div class="mt-5">
+            <h4 class="fw-bold mb-4">Related Tours</h4>
+            <div class="row g-4">
+                {% for rtour in related_tours %}
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100 overflow-hidden" style="border-radius:14px;">
+                        <div style="height:180px;overflow:hidden;">
+                            <img src="{{ rtour.image_src }}"
+                                class="w-100 h-100" style="object-fit:cover;transition:transform 0.4s;"
+                                onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'"
+                                onerror="this.src='/static/images/WebSites Images Travels/Chikkamanglore.png'"
+                                alt="{{ rtour.title }}">
+                        </div>
+                        <div class="card-body">
+                            <span class="badge bg-warning text-dark small mb-1">{{ rtour.get_tour_type_display }}</span>
+                            <h6 class="fw-bold mb-1">{{ rtour.title }}</h6>
+                            <p class="text-muted small mb-0"><i class="bi bi-geo-alt-fill text-warning me-1"></i>{{ rtour.destination.name }}</p>
+                            <p class="text-muted small"><i class="bi bi-clock me-1"></i>{{ rtour.duration_days }}D/{{ rtour.duration_nights }}N</p>
+                        </div>
+                        <div class="card-footer bg-white border-0 d-flex justify-content-between align-items-center pb-3">
+                            <span class="fw-bold text-warning fs-6">₹{{ rtour.final_price }}</span>
+                            <a href="{% url 'tour_detail' rtour.slug %}" class="btn btn-warning btn-sm px-3">View Tour</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

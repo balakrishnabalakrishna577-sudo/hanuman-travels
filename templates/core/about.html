@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}About Us - Hanuman Tours and Travels{% endblock %}
+{% block meta_description %}Learn about Hanuman Tours and Travels - our story, mission, vision and team.{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<div class="page-header py-5 text-white text-center"
+     style="background: linear-gradient(135deg, rgba(26,26,46,0.88), rgba(255,140,0,0.75)),
+            url('https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=1600&q=80') center/cover no-repeat;">
+    <div class="container">
+        <h1 class="fw-bold display-5">About Us</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-warning text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item active text-white-50">About Us</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<!-- Company Story -->
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6" data-aos="fade-right">
+                <span class="badge bg-warning text-dark px-3 py-2 mb-3">Our Story</span>
+                <h2 class="fw-bold mb-4">15+ Years of Creating Unforgettable Journeys</h2>
+                <p class="text-muted">Founded in 2009, Hanuman Tours and Travels has been at the forefront of India's travel industry. We started with a simple mission: to make travel accessible, affordable, and memorable for everyone.</p>
+                <p class="text-muted">Over the years, we have grown from a small local agency to a trusted travel partner for thousands of families, couples, and solo travelers across India and beyond.</p>
+                <div class="row g-3 mt-3">
+                    <div class="col-6">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-check-circle-fill text-warning fs-5"></i>
+                            <span class="fw-semibold">IATA Certified</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-check-circle-fill text-warning fs-5"></i>
+                            <span class="fw-semibold">ISO 9001:2015</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-check-circle-fill text-warning fs-5"></i>
+                            <span class="fw-semibold">Ministry of Tourism</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-check-circle-fill text-warning fs-5"></i>
+                            <span class="fw-semibold">Award Winning</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="stat-box bg-warning text-dark p-4 rounded-3 text-center">
+                            <h2 class="fw-bold mb-0">5000+</h2>
+                            <p class="mb-0 small">Happy Travelers</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box bg-dark text-white p-4 rounded-3 text-center">
+                            <h2 class="fw-bold mb-0 text-warning">200+</h2>
+                            <p class="mb-0 small">Tour Packages</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box bg-dark text-white p-4 rounded-3 text-center">
+                            <h2 class="fw-bold mb-0 text-warning">50+</h2>
+                            <p class="mb-0 small">Destinations</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box bg-warning text-dark p-4 rounded-3 text-center">
+                            <h2 class="fw-bold mb-0">15+</h2>
+                            <p class="mb-0 small">Years Experience</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mission & Vision -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up">
+                <div class="card border-0 shadow-sm h-100 p-4 text-center">
+                    <i class="bi bi-bullseye text-warning fs-1 mb-3"></i>
+                    <h5 class="fw-bold">Our Mission</h5>
+                    <p class="text-muted">To provide exceptional travel experiences that create lasting memories, while ensuring the safety, comfort, and satisfaction of every traveler.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="card border-0 shadow-sm h-100 p-4 text-center">
+                    <i class="bi bi-eye-fill text-warning fs-1 mb-3"></i>
+                    <h5 class="fw-bold">Our Vision</h5>
+                    <p class="text-muted">To become India's most trusted and innovative travel company, connecting people with the world's most beautiful destinations.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="card border-0 shadow-sm h-100 p-4 text-center">
+                    <i class="bi bi-gem text-warning fs-1 mb-3"></i>
+                    <h5 class="fw-bold">Our Values</h5>
+                    <p class="text-muted">Integrity, excellence, customer-first approach, and a passion for travel guide everything we do at Hanuman Tours and Travels.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="badge bg-warning text-dark px-3 py-2 mb-2">Services</span>
+            <h2 class="fw-bold">What We Offer</h2>
+        </div>
+        <div class="row g-4">
+            {% for service in service_list %}
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}00">
+                <div class="d-flex align-items-start gap-3 p-3 border rounded-3 h-100">
+                    <i class="bi {{ service.icon }} text-warning fs-3 flex-shrink-0"></i>
+                    <div>
+                        <h6 class="fw-bold mb-1">{{ service.title }}</h6>
+                        <p class="text-muted small mb-0">{{ service.desc }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Achievements -->
+<section class="py-5" style="background: linear-gradient(135deg, #ff8c00, #ff4500);">
+    <div class="container text-white text-center">
+        <h2 class="fw-bold mb-5" data-aos="fade-up">Our Achievements</h2>
+        <div class="row g-4">
+            <div class="col-md-3 col-6" data-aos="zoom-in">
+                <i class="bi bi-trophy-fill fs-1 mb-2 d-block"></i>
+                <h4 class="fw-bold">Best Travel Agency 2023</h4>
+                <small>Tourism Excellence Award</small>
+            </div>
+            <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="100">
+                <i class="bi bi-star-fill fs-1 mb-2 d-block"></i>
+                <h4 class="fw-bold">4.9/5 Rating</h4>
+                <small>Google Reviews</small>
+            </div>
+            <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="200">
+                <i class="bi bi-people-fill fs-1 mb-2 d-block"></i>
+                <h4 class="fw-bold">5000+ Clients</h4>
+                <small>Satisfied Travelers</small>
+            </div>
+            <div class="col-md-3 col-6" data-aos="zoom-in" data-aos-delay="300">
+                <i class="bi bi-globe2 fs-1 mb-2 d-block"></i>
+                <h4 class="fw-bold">50+ Destinations</h4>
+                <small>Across India &amp; Abroad</small>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,490 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Hanuman Tours and Travels - Your Journey, Our Responsibility{% endblock %}
+{% block meta_description %}Explore India and beyond with Hanuman Tours and Travels. Best tour packages, car rentals, and hotel bookings at unbeatable prices.{% endblock %}
+
+{% block content %}
+
+<!-- ===== HERO SECTION ===== -->
+<section class="hero-section">
+    <div class="hero-bg-slider">
+        <div class="hero-bg-slide slide-1"></div>
+        <div class="hero-bg-slide slide-2"></div>
+        <div class="hero-bg-slide slide-3"></div>
+    </div>
+    <div class="hero-particles d-none d-lg-block">
+        <span class="particle p1"><i class="bi bi-airplane-fill"></i></span>
+        <span class="particle p2"><i class="bi bi-geo-alt-fill"></i></span>
+        <span class="particle p3"><i class="bi bi-compass-fill"></i></span>
+        <span class="particle p4"><i class="bi bi-camera-fill"></i></span>
+        <span class="particle p5"><i class="bi bi-map-fill"></i></span>
+    </div>
+    <div class="hero-content w-100">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 col-md-10 col-lg-9 col-xl-8 text-center">
+
+                    <!-- Badge -->
+                    <div class="hero-badge mb-3" data-aos="fade-down" data-aos-delay="100">
+                        <i class="bi bi-star-fill me-1"></i>Trusted by 5000+ Happy Travelers
+                    </div>
+
+                    <!-- Title -->
+                    <h1 class="hero-title mb-3" data-aos="fade-up" data-aos-delay="200">
+                        Discover the World with
+                        <span class="hero-highlight">
+                            <span class="highlight-text">Hanuman Tours &amp; Travels</span>
+                            <svg class="highlight-svg" viewBox="0 0 300 20" preserveAspectRatio="none">
+                                <path d="M0,15 Q75,0 150,10 Q225,20 300,5" stroke="#ff8c00" stroke-width="3" fill="none" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                    </h1>
+
+                    <!-- Subtitle -->
+                    <p class="hero-subtitle mb-4" data-aos="fade-up" data-aos-delay="300">
+                        <span class="typed-text">Your Journey, Our Responsibility</span><br>
+                        Explore India's most breathtaking destinations with expert guides &amp; unbeatable prices.
+                    </p>
+
+                    <!-- CTA Buttons -->
+                    <div class="hero-cta mb-4" data-aos="fade-up" data-aos-delay="400">
+                        <a href="{% url 'tour_list' %}" class="hero-btn-primary">
+                            <i class="bi bi-compass-fill me-2"></i>Explore Tours
+                            <span class="btn-shine"></span>
+                        </a>
+                        <a href="https://wa.me/{{ WHATSAPP_NUMBER }}?text=Hello! I want to know about your tour packages."
+                           class="hero-btn-whatsapp" target="_blank" rel="noopener">
+                            <i class="bi bi-whatsapp me-2"></i>WhatsApp
+                        </a>
+                        <a href="{% url 'contact' %}" class="hero-btn-outline d-none d-md-inline-flex">
+                            <i class="bi bi-telephone-fill me-2"></i>Contact Us
+                        </a>
+                    </div>
+
+                    <!-- Trust Bar -->
+                    <div class="hero-trust" data-aos="fade-up" data-aos-delay="500">
+                        <div class="trust-item">
+                            <i class="bi bi-shield-check-fill"></i><span>100% Safe</span>
+                        </div>
+                        <div class="trust-divider"></div>
+                        <div class="trust-item">
+                            <i class="bi bi-currency-rupee"></i><span>Best Price</span>
+                        </div>
+                        <div class="trust-divider"></div>
+                        <div class="trust-item">
+                            <i class="bi bi-headset"></i><span>24/7 Support</span>
+                        </div>
+                        <div class="trust-divider"></div>
+                        <div class="trust-item">
+                            <i class="bi bi-star-fill"></i><span>4.9 Rating</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ===== STATS ===== -->
+<section class="py-4 bg-dark text-white">
+    <div class="container">
+        <div class="row text-center g-3">
+            <div class="col-6 col-md-3">
+                <div class="stat-box py-2">
+                    <h3 class="fw-bold text-warning mb-0">5000+</h3>
+                    <small class="text-white-50">Happy Travelers</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-box py-2">
+                    <h3 class="fw-bold text-warning mb-0">200+</h3>
+                    <small class="text-white-50">Tour Packages</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-box py-2">
+                    <h3 class="fw-bold text-warning mb-0">50+</h3>
+                    <small class="text-white-50">Destinations</small>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-box py-2">
+                    <h3 class="fw-bold text-warning mb-0">15+</h3>
+                    <small class="text-white-50">Years Experience</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== POPULAR DESTINATIONS ===== -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="badge bg-warning text-dark px-3 py-2 mb-2">Destinations</span>
+            <h2 class="fw-bold">Popular Destinations</h2>
+            <p class="text-muted">Explore India's most breathtaking locations</p>
+        </div>
+        <div class="row g-4" id="destGrid">
+            {% if popular_destinations %}
+                {% for item in destinations_with_images %}
+                <div class="col-lg-3 col-md-4 col-6 dest-item" data-aos="fade-up">
+                    <a href="{% url 'tour_list' %}?destination={{ item.dest.id }}" class="text-decoration-none">
+                        <div class="destination-card rounded-3 overflow-hidden position-relative">
+                            <img src="{{ item.dest.image_src }}" alt="{{ item.dest.name }}" class="w-100 destination-img" loading="lazy"
+                                 onerror="this.src='https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80'">
+                            <div class="destination-overlay position-absolute bottom-0 start-0 end-0 p-3 text-white">
+                                <h6 class="fw-bold mb-0">{{ item.dest.name }}</h6>
+                                <small><i class="bi bi-geo-alt-fill me-1"></i>{{ item.dest.state|default:item.dest.country }}</small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            {% else %}
+            {% for dest in sample_destinations %}
+            <div class="col-lg-3 col-md-4 col-6 dest-item" data-aos="fade-up">
+                <a href="{% url 'tour_list' %}" class="text-decoration-none">
+                    <div class="destination-card rounded-3 overflow-hidden position-relative">
+                        <img src="{{ dest.image }}" alt="{{ dest.name }}" class="w-100 destination-img" loading="lazy"
+                             onerror="this.src='https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80'">
+                        <div class="destination-overlay position-absolute bottom-0 start-0 end-0 p-3 text-white">
+                            <h6 class="fw-bold mb-0">{{ dest.name }}</h6>
+                            <small><i class="bi bi-geo-alt-fill me-1"></i>{{ dest.country }}</small>
+                        </div>
+                        <div class="dest-packages-badge position-absolute top-0 end-0 m-2">
+                            <span class="badge bg-warning text-dark">{{ dest.packages }}+ Tours</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'tour_list' %}" class="btn btn-outline-warning px-4 fw-semibold">
+                Explore All Tours <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FEATURED TOUR PACKAGES ===== -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="badge bg-warning text-dark px-3 py-2 mb-2">Featured</span>
+            <h2 class="fw-bold">Popular Tour Packages</h2>
+            <p class="text-muted">Handpicked tours for unforgettable experiences</p>
+        </div>
+        <div class="row g-4">
+            {% for tour in featured_tours %}
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}00">
+                <div class="card tour-card h-100 border-0 shadow-sm">
+                    <div class="position-relative overflow-hidden" style="height:220px;">
+                        <img src="{{ tour.image_src }}" class="card-img-top tour-thumb w-100 h-100" style="object-fit:cover;" alt="{{ tour.title }}"
+                             onerror="this.src='/static/images/WebSites Images Travels/Chikkamanglore.png'">
+                        {% if tour.discount_percent > 0 %}
+                        <span class="badge bg-danger position-absolute top-0 end-0 m-2">{{ tour.discount_percent }}% OFF</span>
+                        {% endif %}
+                        <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2">{{ tour.get_tour_type_display }}</span>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-title fw-bold">{{ tour.title }}</h6>
+                        <p class="text-muted small mb-2">
+                            <i class="bi bi-geo-alt-fill text-warning me-1"></i>{{ tour.destination.name }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small text-muted"><i class="bi bi-clock me-1"></i>{{ tour.duration_days }}D/{{ tour.duration_nights }}N</span>
+                            <span class="small text-muted"><i class="bi bi-people me-1"></i>Max {{ tour.max_group_size }}</span>
+                        </div>
+                        <div class="d-flex align-items-center mb-2">
+                            {% for i in "12345" %}
+                            <i class="bi bi-star{% if forloop.counter <= tour.avg_rating %}-fill{% endif %} text-warning small"></i>
+                            {% endfor %}
+                            <small class="text-muted ms-1">({{ tour.reviews.count }})</small>
+                        </div>
+                        <p class="text-muted small mb-0">{{ tour.description|truncatewords:15 }}</p>
+                    </div>
+                    <div class="card-footer bg-white border-0 d-flex justify-content-between align-items-center pt-0">
+                        <div>
+                            {% if tour.discounted_price %}
+                            <small class="text-muted text-decoration-line-through d-block">₹{{ tour.price_per_person }}</small>
+                            <span class="fw-bold text-warning fs-5">₹{{ tour.discounted_price }}</span>
+                            {% else %}
+                            <span class="fw-bold text-warning fs-5">₹{{ tour.price_per_person }}</span>
+                            {% endif %}
+                            <small class="text-muted">/person</small>
+                        </div>
+                        <a href="{% url 'tour_detail' tour.slug %}" class="btn btn-warning btn-sm fw-semibold">
+                            View Details <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <!-- Sample tours shown when no DB data exists -->
+            {% for tour in sample_tours %}
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}00">
+                <div class="card tour-card h-100 border-0 shadow-sm">
+                    <div class="position-relative overflow-hidden" style="height:220px;">
+                        <img src="{{ tour.image }}" class="w-100 h-100" style="object-fit:cover;" alt="{{ tour.title }}">
+                        <span class="badge {{ tour.badge_color }} position-absolute top-0 end-0 m-2">{{ tour.badge }}</span>
+                        <span class="badge bg-dark bg-opacity-75 position-absolute top-0 start-0 m-2">{{ tour.tour_type }}</span>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-title fw-bold">{{ tour.title }}</h6>
+                        <p class="text-muted small mb-2">
+                            <i class="bi bi-geo-alt-fill text-warning me-1"></i>{{ tour.destination }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small text-muted"><i class="bi bi-clock me-1"></i>{{ tour.duration }}</span>
+                            <span class="small text-muted"><i class="bi bi-people me-1"></i>Max {{ tour.max_group }}</span>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            {% for i in "12345" %}
+                            <i class="bi bi-star{% if forloop.counter <= tour.rating %}-fill{% endif %} text-warning small"></i>
+                            {% endfor %}
+                            <small class="text-muted ms-1">({{ tour.reviews }})</small>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white border-0 d-flex justify-content-between align-items-center pt-0">
+                        <div>
+                            <span class="fw-bold text-warning fs-5">₹{{ tour.price }}</span>
+                            <small class="text-muted">/person</small>
+                        </div>
+                        <a href="{% url 'tour_list' %}" class="btn btn-warning btn-sm fw-semibold">
+                            View Details <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endfor %}
+        </div>
+        <div class="text-center mt-5">
+            <a href="{% url 'tour_list' %}" class="btn btn-warning btn-lg px-5 fw-semibold">
+                View All Packages <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ===== WHY CHOOSE US ===== -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="badge bg-warning text-dark px-3 py-2 mb-2">Why Us</span>
+            <h2 class="fw-bold">Why Choose Hanuman Tours &amp; Travels?</h2>
+            <p class="text-muted">We make your travel dreams a reality</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="0">
+                <div class="why-card text-center p-4 rounded-3 h-100">
+                    <div class="why-icon mb-3"><i class="bi bi-shield-check-fill text-warning" style="font-size:3rem;"></i></div>
+                    <h6 class="fw-bold">100% Safe &amp; Secure</h6>
+                    <p class="text-muted small mb-0">Your safety is our top priority. All tours are carefully planned and monitored.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="why-card text-center p-4 rounded-3 h-100">
+                    <div class="why-icon mb-3"><i class="bi bi-currency-rupee text-warning" style="font-size:3rem;"></i></div>
+                    <h6 class="fw-bold">Best Price Guarantee</h6>
+                    <p class="text-muted small mb-0">We offer the most competitive prices with no hidden charges.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="why-card text-center p-4 rounded-3 h-100">
+                    <div class="why-icon mb-3"><i class="bi bi-headset text-warning" style="font-size:3rem;"></i></div>
+                    <h6 class="fw-bold">24/7 Support</h6>
+                    <p class="text-muted small mb-0">Our dedicated team is available round the clock to assist you.</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="why-card text-center p-4 rounded-3 h-100">
+                    <div class="why-icon mb-3"><i class="bi bi-person-check-fill text-warning" style="font-size:3rem;"></i></div>
+                    <h6 class="fw-bold">Expert Guides</h6>
+                    <p class="text-muted small mb-0">Experienced and certified tour guides for every destination.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== OUR SERVICES ===== -->
+<section class="py-5 bg-warning">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="fw-bold text-dark">Our Services</h2>
+            <p class="text-dark opacity-75">Everything you need for a perfect trip</p>
+        </div>
+        <div class="row g-4 text-center">
+            <div class="col-lg-2 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="0">
+                <a href="{% url 'tour_list' %}" class="text-decoration-none">
+                    <div class="service-item p-3 rounded-3 bg-white h-100">
+                        <i class="bi bi-compass-fill text-warning fs-2 d-block mb-2"></i>
+                        <small class="fw-semibold text-dark">Tour Packages</small>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="100">
+                <a href="{% url 'vehicle_list' %}" class="text-decoration-none">
+                    <div class="service-item p-3 rounded-3 bg-white h-100">
+                        <i class="bi bi-car-front-fill text-warning fs-2 d-block mb-2"></i>
+                        <small class="fw-semibold text-dark">Car Rental</small>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-lg-2 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="300">
+                <a href="{% url 'gallery_list' %}" class="text-decoration-none">
+                    <div class="service-item p-3 rounded-3 bg-white h-100">
+                        <i class="bi bi-camera-fill text-warning fs-2 d-block mb-2"></i>
+                        <small class="fw-semibold text-dark">Photo Gallery</small>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="400">
+                <a href="{% url 'blog_list' %}" class="text-decoration-none">
+                    <div class="service-item p-3 rounded-3 bg-white h-100">
+                        <i class="bi bi-journal-richtext text-warning fs-2 d-block mb-2"></i>
+                        <small class="fw-semibold text-dark">Travel Blog</small>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="500">
+                <a href="{% url 'contact' %}" class="text-decoration-none">
+                    <div class="service-item p-3 rounded-3 bg-white h-100">
+                        <i class="bi bi-heart-fill text-warning fs-2 d-block mb-2"></i>
+                        <small class="fw-semibold text-dark">Custom Tours</small>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-2 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="600">
+                <a href="{% url 'airport_transfer' %}" class="text-decoration-none">
+                    <div class="service-item p-3 rounded-3 bg-white h-100">
+                        <i class="bi bi-airplane-fill text-warning fs-2 d-block mb-2"></i>
+                        <small class="fw-semibold text-dark">Airport Transfer</small>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== TESTIMONIALS ===== -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="badge bg-warning text-dark px-3 py-2 mb-2">Testimonials</span>
+            <h2 class="fw-bold">What Our Travelers Say</h2>
+            <p class="text-muted">Real experiences from real travelers</p>
+        </div>
+        <div class="row g-4">
+            {% for testimonial in testimonials %}
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ forloop.counter0 }}00">
+                <div class="testimonial-card card border-0 shadow-sm h-100 p-4">
+                    <div class="d-flex mb-3">
+                        {% for i in "12345" %}
+                        <i class="bi bi-star{% if forloop.counter <= testimonial.rating %}-fill{% endif %} text-warning me-1"></i>
+                        {% endfor %}
+                    </div>
+                    <p class="text-muted fst-italic mb-3">"{{ testimonial.message }}"</p>
+                    <div class="d-flex align-items-center mt-auto">
+                        {% if testimonial.image %}
+                        <img src="{{ testimonial.image.url }}" class="rounded-circle me-3" width="50" height="50" alt="{{ testimonial.name }}" style="object-fit:cover;">
+                        {% else %}
+                        <div class="rounded-circle bg-warning d-flex align-items-center justify-content-center me-3 flex-shrink-0" style="width:50px;height:50px;">
+                            <i class="bi bi-person-fill text-white fs-5"></i>
+                        </div>
+                        {% endif %}
+                        <div>
+                            <h6 class="mb-0 fw-bold">{{ testimonial.name }}</h6>
+                            <small class="text-muted">{{ testimonial.location }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center text-muted py-4">
+                <i class="bi bi-chat-quote fs-1 d-block mb-2 text-warning"></i>
+                <p>Add testimonials from the <a href="/admin/core/testimonial/add/" class="text-warning">admin panel</a>.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+
+
+<!-- ===== PHOTO GALLERY ===== -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <span class="badge bg-warning text-dark px-3 py-2 mb-2">Gallery</span>
+            <h2 class="fw-bold">Photo Gallery</h2>
+            <p class="text-muted">Moments captured from our unforgettable journeys</p>
+        </div>
+        <div class="row g-3">
+            {% if gallery_images %}
+                {% for img in gallery_images %}
+                <div class="col-lg-3 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="{{ forloop.counter0 }}00">
+                    <a href="{% url 'gallery_list' %}" class="d-block gallery-thumb rounded-3 overflow-hidden position-relative">
+                        <img src="{{ img.image.url }}" alt="{{ img.title }}" class="w-100" style="height:200px;object-fit:cover;">
+                        <div class="gallery-thumb-overlay position-absolute inset-0 d-flex align-items-center justify-content-center opacity-0"
+                             style="background:rgba(255,140,0,0.7);top:0;left:0;right:0;bottom:0;transition:opacity 0.3s;">
+                            <i class="bi bi-zoom-in text-white fs-3"></i>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            {% else %}
+            <!-- Sample gallery images — local destination photos -->
+            {% for item in sample_gallery_local %}
+            <div class="col-lg-3 col-md-4 col-6" data-aos="zoom-in" data-aos-delay="{{ forloop.counter0 }}00">
+                <a href="{% url 'gallery_list' %}" class="d-block gallery-thumb rounded-3 overflow-hidden position-relative">
+                    <img src="{{ item.src }}" alt="{{ item.title }}" class="w-100" style="height:200px;object-fit:cover;">
+                    <div class="gallery-thumb-overlay position-absolute d-flex align-items-center justify-content-center opacity-0" style="background:rgba(255,140,0,0.7);top:0;left:0;right:0;bottom:0;transition:opacity 0.3s;">
+                        <i class="bi bi-zoom-in text-white fs-3"></i>
+                    </div>
+                    <div class="position-absolute bottom-0 start-0 end-0 px-2 py-1" style="background:rgba(0,0,0,0.45);">
+                        <small class="text-white fw-semibold" style="font-size:0.72rem;">{{ item.title }}</small>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'gallery_list' %}" class="btn btn-outline-warning px-5 fw-semibold">
+                View Full Gallery <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ===== CTA SECTION ===== -->
+<section class="py-5 text-white text-center" style="background: linear-gradient(135deg, #ff8c00 0%, #ff4500 100%);">
+    <div class="container" data-aos="zoom-in">
+        <div class="row justify-content-center">
+            <div class="col-lg-7">
+                <i class="bi bi-airplane-fill fs-1 mb-3 d-block opacity-75"></i>
+                <h2 class="fw-bold mb-3">Ready for Your Next Adventure?</h2>
+                <p class="lead mb-4 opacity-90">Book your dream tour today and get exclusive deals. Our team is ready to plan the perfect trip for you.</p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a href="{% url 'tour_list' %}" class="btn btn-dark btn-lg px-5 fw-semibold">
+                        <i class="bi bi-compass-fill me-2"></i>Browse Tours
+                    </a>
+                    <a href="https://wa.me/{{ WHATSAPP_NUMBER }}?text=Hello! I want to plan a trip." class="btn btn-light btn-lg px-5 fw-semibold" target="_blank" rel="noopener">
+                        <i class="bi bi-whatsapp me-2 text-success"></i>WhatsApp Us
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

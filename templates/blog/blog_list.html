@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="page-header py-5 text-white text-center" style="background: linear-gradient(135deg, rgba(255,140,0,0.9), rgba(0,0,0,0.8)), url('{% static "images/hero1.jpg" %}') center/cover;">
+    <div class="container">
+        <h1 class="fw-bold display-5">Travel Blog</h1>
+        <p class="lead">Stories, tips and inspiration for your next adventure</p>
+        <nav aria-label="breadcrumb"><ol class="breadcrumb justify-content-center">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-warning">Home</a></li>
+            <li class="breadcrumb-item active text-white">Blog</li>
+        </ol></nav>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="row g-4">
+                    {% for post in posts %}
+                    <div class="col-md-6" data-aos="fade-up">
+                        <div class="card border-0 shadow-sm h-100">
+                            {% if post.thumbnail %}
+                            <img src="{{ post.thumbnail.url }}" class="card-img-top" style="height:200px;object-fit:cover;" alt="{{ post.title }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <span class="badge bg-warning text-dark mb-2">{{ post.category.name|default:"Travel" }}</span>
+                                <h6 class="card-title fw-bold">{{ post.title }}</h6>
+                                <p class="text-muted small">{{ post.excerpt|truncatewords:25 }}</p>
+                                <div class="d-flex align-items-center text-muted small flex-wrap gap-1">
+                                    <span><i class="bi bi-person me-1"></i>{{ post.author.get_full_name|default:post.author.username }}</span>
+                                    <span class="mx-1">|</span>
+                                    <span><i class="bi bi-calendar me-1"></i>{{ post.created_at|date:"M d, Y" }}</span>
+                                    <span class="mx-1">|</span>
+                                    <span><i class="bi bi-clock me-1"></i>{{ post.reading_time }} min read</span>
+                                    <span class="mx-1">|</span>
+                                    <span><i class="bi bi-eye me-1"></i>{{ post.views }}</span>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white border-0">
+                                <a href="{% url 'blog_detail' post.slug %}" class="btn btn-outline-warning btn-sm">Read More <i class="bi bi-arrow-right ms-1"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-5">
+                        <i class="bi bi-journal-text fs-1 text-muted d-block mb-3"></i>
+                        <h5 class="text-muted">No blog posts yet</h5>
+                        <p>Add blog posts from the <a href="/admin/blog/blogpost/add/">admin panel</a>.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if posts.has_other_pages %}
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if posts.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">Previous</a></li>{% endif %}
+                        {% for num in posts.paginator.page_range %}<li class="page-item {% if posts.number == num %}active{% endif %}"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>{% endfor %}
+                        {% if posts.has_next %}<li class="page-item"><a class="page-link" href="?page={{ posts.next_page_number }}">Next</a></li>{% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm p-4 mb-4">
+                    <h6 class="fw-bold mb-3">Categories</h6>
+                    {% for cat in categories %}
+                    <a href="?category={{ cat.slug }}" class="d-flex justify-content-between text-decoration-none text-dark py-2 border-bottom">
+                        <span>{{ cat.name }}</span>
+                        <i class="bi bi-chevron-right text-warning"></i>
+                    </a>
+                    {% endfor %}
+                </div>
+                <div class="card border-0 shadow-sm p-4" style="background: linear-gradient(135deg, #ff8c00, #ff4500);">
+                    <h6 class="fw-bold text-white mb-3">Plan Your Trip</h6>
+                    <p class="text-white small">Ready to explore? Browse our amazing tour packages.</p>
+                    <a href="{% url 'tour_list' %}" class="btn btn-dark btn-sm">View Tours</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
