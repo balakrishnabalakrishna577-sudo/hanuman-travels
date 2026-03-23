@@ -106,11 +106,11 @@
                     <a class="nav-link nav-pill {% if request.resolver_match.url_name == 'tour_list' %}active{% endif %}" href="{% url 'tour_list' %}">Tours</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <!-- <a class="nav-link nav-pill dropdown-toggle {% if request.resolver_match.url_name == 'vehicle_list' or request.resolver_match.url_name == 'airport_transfer' %}active{% endif %}"
+                    <a class="nav-link nav-pill dropdown-toggle {% if request.resolver_match.url_name == 'vehicle_list' or request.resolver_match.url_name == 'airport_transfer' %}active{% endif %}"
                        href="#" role="button" data-bs-toggle="dropdown">Car Rental</a>
-                    <!--<ul class="dropdown-menu border-0 shadow-sm">
-                       <!-- <li><a class="dropdown-item" href="{% url 'vehicle_list' %}"><i class="bi bi-car-front-fill text-warning me-2"></i>Car Rental</a></li> -->
-                        <li><a class="dropdown-item" href="{% url 'airport_transfer' %}">Airport Transfer</a>
+                    <ul class="dropdown-menu border-0 shadow-sm">
+                        <li><a class="dropdown-item" href="{% url 'vehicle_list' %}"><i class="bi bi-car-front-fill text-warning me-2"></i>Car Rental</a></li>
+                        <li><a class="dropdown-item" href="{% url 'airport_transfer' %}"><i class="bi bi-airplane-fill text-warning me-2"></i>Airport Transfer</a></li>
                     </ul>
                 </li>
                 <li class="nav-item">
